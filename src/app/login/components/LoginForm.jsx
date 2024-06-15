@@ -49,7 +49,7 @@ const LoginForm = () => {
   return (
     <div className=" w-full min-h-lvh flex items-center justify-center flex-col gap-[35px] bg-bgfakeWhite">
       <div className="flex flex-col sm:flex-col-reverse justify-center items-center gap-[29px]">
-        <Image src={LogoP} alt="logo" />
+        <Image src={LogoP} alt="logo" priority />
         <h2 className="text-center font-poppins text-headcolor font-semibold text-[22px] sm:text-[33px]">
           Bienvenue, Connectez-vous <br className="sm:hidden" /> à votre compte
         </h2>

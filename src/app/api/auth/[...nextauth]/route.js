@@ -24,7 +24,7 @@ export const authOptions = {
           // );
           await connectMongoDB();
           const user = await User.findOne({ username });
-          console.log("User: ", user);
+          // console.log("User: ", user);
 
           if (!user) {
             // console.log("User Not found");
