@@ -2,8 +2,8 @@ import { AuthProvider } from "./Providers";
 import { Poppins } from "next/font/google";
 import "./globals.css";
 
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+// import { getServerSession } from "next-auth";
+// import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 const poppins = Poppins({ subsets: ["latin"], weight: ["400", "700"] });
 
@@ -13,7 +13,8 @@ export const metadata = {
 };
 
 export default async function RootLayout({ children }) {
-  const session = await getServerSession(authOptions);
+  // const session = await getServerSession(authOptions);
+  // console.log("Session: ", session);
 
   return (
     <html lang="en">

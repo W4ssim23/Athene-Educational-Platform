@@ -12,32 +12,33 @@ export const authOptions = {
 
       async authorize(credentials) {
         const { username, password } = credentials;
+        console.log("executing authorize function");
 
         try {
-          console.log(
-            "Credentials",
-            "username: ",
-            username,
-            "password: ",
-            password
-          );
+          // console.log(
+          //   "Credentials",
+          //   "username: ",
+          //   username,
+          //   "password: ",
+          //   password
+          // );
           await connectMongoDB();
           const user = await User.findOne({ username });
           console.log("User: ", user);
 
           if (!user) {
-            console.log("User Not found");
+            // console.log("User Not found");
             return null;
           }
-          console.log("User Found: ", user);
+          // console.log("User Found: ", user);
 
           const passwordsMatch = await bcrypt.compare(password, user.password);
 
           if (!passwordsMatch) {
-            console.log("Passwords do not match");
+            // console.log("Passwords do not match");
             return null;
           }
-          console.log("Passwords match");
+          // console.log("Passwords match");
 
           return user;
         } catch (error) {
@@ -53,6 +54,29 @@ export const authOptions = {
   pages: {
     signIn: "/login",
   },
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.role = user.role;
+        token.name = user.name;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (session?.user) {
+        session.user.role = token.role;
+        session.user.name = token.name;
+      }
+      return session;
+    },
+  },
+  // async redirect({ url, baseUrl }) {
+  //   // If the request comes from the API, don't redirect
+  //   if (url.includes("/api/auth")) {
+  //     return url;
+  //   }
+  //   return baseUrl;
+  // },
 };
 
 const handler = NextAuth(authOptions);
