@@ -1,8 +1,5 @@
 import mongoose, { Schema } from "mongoose";
 
-// mongoose.connect(process.env.MONGODB_URI);
-// mongoose.Promise = global.Promise;
-
 const userSchema = new Schema(
   {
     firstName: {
@@ -33,7 +30,7 @@ const userSchema = new Schema(
       enum: ["admin", "student", "parent", "teacher", "adviser"],
       required: true,
     },
-    img: {
+    pfp: {
       type: String,
     },
     isAdmin: {

@@ -5,7 +5,7 @@ const BarItem = ({ item, pg }) => {
   return (
     <Link
       href={item.theLink}
-      className={` cursor-pointer hover:scale-105 transition-all overflow-hidden select-none lg:w-full p-3 lg:p-5 lg:rounded-tl-[30px] lg:rounded-bl-[30px] lg:ml-[30px] rounded-full lg:rounded-none  ${
+      className={` cursor-pointer hover:scale-105 transition-all overflow-hidden select-none lg:w-[96%] p-3 lg:p-5 lg:rounded-tl-[30px] lg:rounded-bl-[30px] lg:ml-[4%] rounded-full lg:rounded-none  ${
         pg === item.title.toLowerCase() ? "bg-bgfakeWhite" : ""
       } `}
       key={item.title}

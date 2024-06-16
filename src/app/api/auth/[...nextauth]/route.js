@@ -58,14 +58,28 @@ export const authOptions = {
     async jwt({ token, user }) {
       if (user) {
         token.role = user.role;
-        token.name = user.name;
+        token.firstName = user.firstName;
+        token.lastName = user.lastName;
+        token.pfp =
+          "https://pagesix.com/wp-content/uploads/sites/3/2019/04/gettyimages-1076483808.jpg?quality=75&strip=all";
+        token.email = user.email;
+        token.address = user.address;
+        token.phone = user.phone;
+        token.isAdmin = user.isAdmin;
+        //inserting other ifs later
       }
       return token;
     },
     async session({ session, token }) {
       if (session?.user) {
         session.user.role = token.role;
-        session.user.name = token.name;
+        session.user.firstName = token.firstName;
+        session.user.lastName = token.lastName;
+        session.user.pfp = token.pfp;
+        session.user.email = token.email;
+        session.user.address = token.address;
+        session.user.phone = token.phone;
+        session.user.isAdmin = token.isAdmin;
       }
       return session;
     },
