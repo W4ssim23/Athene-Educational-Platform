@@ -1,29 +1,18 @@
-import { Gear, Bell, logout, LogoP, LogoW } from "@/assets";
+import { Gear, Bell, logout, LogoW } from "@/assets";
 import Image from "next/image";
 import Link from "next/link";
-import Waiting from "./Waiting";
+import UsreInfo from "./UsreInfo";
+import Title from "./Title";
+import Logoo from "./Logoo";
 
-const Header = async ({ title }) => {
-  // let user = null;
-  // let session = null;
-
-  // session = await getServerSession(authOptions);
-  // user = session.user;
-
+const Header = async () => {
   return (
-    <div className="relative flex  font-poppins justify-between w-full sm:pl-[110px] lg:pl-[21%] pr-3 pt-4">
+    <div className="relative flex  font-poppins justify-between w-full">
       <div className="flex items-center gap-[6px]">
-        <Image
-          src={LogoP}
-          alt="Logo"
-          className="w-[50px] h-[50px] mr-2 sm:hidden"
-          priority
-        />
-        <h1 className="text-[26px] font-bold text-blueTitle sm:text-[30px]">
-          {title}
-        </h1>
+        <Logoo />
+        <Title />
       </div>
-      <Waiting />
+      <UsreInfo />
       {/* {show && <Dropdown />} */}
     </div>
   );

@@ -1,4 +1,5 @@
 //loading the profile page
+//might put the skeleton loader here
 
 export default function Loading() {
   return (

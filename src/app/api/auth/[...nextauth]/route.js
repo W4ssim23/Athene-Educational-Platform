@@ -55,8 +55,10 @@ export const authOptions = {
     signIn: "/login",
   },
   callbacks: {
+    //adjust pfp , classes and other stuff for the model later
     async jwt({ token, user }) {
       if (user) {
+        token.id = user._id;
         token.role = user.role;
         token.firstName = user.firstName;
         token.lastName = user.lastName;
@@ -66,12 +68,15 @@ export const authOptions = {
         token.address = user.address;
         token.phone = user.phone;
         token.isAdmin = user.isAdmin;
+        token.classes = ["1s1", "1m1", "1p1"];
+        token.about = "A Goated Developer 'Full stack Developer hhhhh' ";
         //inserting other ifs later
       }
       return token;
     },
     async session({ session, token }) {
       if (session?.user) {
+        session.user.id = token.id;
         session.user.role = token.role;
         session.user.firstName = token.firstName;
         session.user.lastName = token.lastName;
@@ -80,6 +85,8 @@ export const authOptions = {
         session.user.address = token.address;
         session.user.phone = token.phone;
         session.user.isAdmin = token.isAdmin;
+        session.user.classes = token.classes;
+        session.user.about = token.about;
       }
       return session;
     },

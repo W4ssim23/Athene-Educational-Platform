@@ -8,7 +8,7 @@ const Login = async () => {
 
   if (session) redirect("/classes");
   return (
-    <main>
+    <main className="sm:pr-[100px] lg:pr-[18%] mt-[-67px]">
       <LoginForm />
     </main>
   );
