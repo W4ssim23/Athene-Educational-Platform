@@ -1,9 +1,15 @@
 "use client";
 
-import { Avatar } from "@nextui-org/avatar";
 import { useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import {
+  Avatar,
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem,
+} from "@nextui-org/react";
 
 export default function UsreInfo() {
   const [user, setUser] = useState(false);
@@ -51,18 +57,26 @@ export default function UsreInfo() {
         </p>
         <p className="text-[13px] text-textgray2">{user?.role ?? "role"}</p>
       </div>
-      {/* <div
-          onClick={() => {
-            setShow(!show);
-          }}
-        > */}
-      <Avatar
-        showFallback
-        src={user?.pfp}
-        className={
-          "h-[48px] w-[48px] hover:border-4 hover:border-primary cursor-pointer"
-        }
-      />
+      <Dropdown>
+        <DropdownTrigger>
+          <Avatar
+            showFallback
+            src={user?.pfp}
+            className={
+              "h-[48px] w-[48px] hover:border-4 hover:border-primary cursor-pointer"
+            }
+          />
+        </DropdownTrigger>
+
+        <DropdownMenu aria-label="Static Actions">
+          <DropdownItem key="new">New file</DropdownItem>
+          <DropdownItem key="copy">Copy link</DropdownItem>
+          <DropdownItem key="edit">Edit file</DropdownItem>
+          <DropdownItem key="delete" className="text-danger" color="danger">
+            Delete file
+          </DropdownItem>
+        </DropdownMenu>
+      </Dropdown>
     </div>
   );
 }

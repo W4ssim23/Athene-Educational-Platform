@@ -6,9 +6,9 @@ import { useState, useEffect } from "react";
 import ProfilePicture from "./ProfilePicture";
 import SmallButton from "@/app/components/ui/SmallButton";
 import ClassBox from "@/app/components/ui/ClassBox";
+import Skeleton from "./Skeleton";
 
 //WILL BE EDITED AFTER DB IS FULLY READY
-//WILL BE CHANGED TO A SERVER COMPONENT
 
 const Content = () => {
   const { data: session } = useSession();
@@ -23,7 +23,7 @@ const Content = () => {
 
   const buttonSizes = "40px";
 
-  if (!user) return <p>skeleton</p>;
+  if (!user) return <Skeleton />;
 
   return (
     <div className="relative flex flex-col rounded-xl p-2 bg-white sm:p-[25px]  overflow-hidden">
@@ -73,7 +73,6 @@ const Content = () => {
         >
           <SmallButton
             picture={Edit}
-            altText="Edit"
             hoverText="Edit"
             bg={"#FB7D5B"}
             size={"40px"}
