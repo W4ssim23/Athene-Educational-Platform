@@ -37,7 +37,7 @@ const LoginForm = () => {
         return;
       }
       // console.log("LogedIn !", res);
-      router.replace("classes");
+      router.replace("/");
       setLoading(false);
     } catch (error) {
       setError("An error occurred while logging in");
