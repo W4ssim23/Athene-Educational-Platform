@@ -17,7 +17,7 @@ export default function Title() {
   const pathname = usePathname();
   const pg = getFirstElement(pathname);
   if (!pg) return;
-  const title = TitleConfig[pg] || "A Title";
+  const title = TitleConfig[pg] || "Not Found";
   return (
     <h1 className="text-[26px] font-bold text-blueTitle sm:text-[30px]">
       {title}
