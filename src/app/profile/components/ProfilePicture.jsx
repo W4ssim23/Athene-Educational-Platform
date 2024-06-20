@@ -1,15 +1,14 @@
-"use client";
-
-import { Avatar } from "@nextui-org/react";
+import { Avatar, Modal, useDisclosure } from "@nextui-org/react";
 import { PencilIcon } from "@heroicons/react/24/solid";
-
-//ADD ON CLICK POPUP LAHNA , PASS THE USER ID AS A PROP
+import UploadPfP from "./UploadPfP";
 
 export default function ProfilePicture({ pfp }) {
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
   return (
     <div
       className="group  rounded-full flex items-center relative justify-center cursor-pointer
-                    border-4 border-white ml-[15px] mt-[55px] h-[115px] w-[115px]"
+                    border-4 border-white ml-[15px] mt-[55px] h-[115px] w-[115px] p-0"
+      onClick={onOpen}
     >
       <Avatar
         fallback
@@ -26,6 +25,17 @@ export default function ProfilePicture({ pfp }) {
           <PencilIcon className={`h-[30px] text-white cursor-pointer`} />
         </div>
       </div>
+      {/* PopUp : */}
+      <>
+        <Modal
+          isOpen={isOpen}
+          onOpenChange={onOpenChange}
+          placement="center"
+          className="m-1 sm:m-0"
+        >
+          <UploadPfP pfp={pfp} />
+        </Modal>
+      </>
     </div>
   );
 }

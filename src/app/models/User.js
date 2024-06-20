@@ -14,6 +14,9 @@ const userSchema = new Schema(
       minlength: 3,
       maxlength: 20,
     },
+    pfp: {
+      type: String,
+    },
     username: {
       type: String,
       required: true,
@@ -30,9 +33,6 @@ const userSchema = new Schema(
       enum: ["admin", "student", "parent", "teacher", "adviser"],
       required: true,
     },
-    pfp: {
-      type: String,
-    },
     isAdmin: {
       type: Boolean,
       default: false,
@@ -44,6 +44,9 @@ const userSchema = new Schema(
       type: String,
     },
     address: {
+      type: String,
+    },
+    about: {
       type: String,
     },
     // Relations

@@ -23,7 +23,7 @@ const LoginForm = () => {
       return;
     }
     setLoading(true);
-    console.log("submit", username, password);
+    // console.log("submit", username, password);
     try {
       const res = await signIn("credentials", {
         username,
@@ -36,7 +36,7 @@ const LoginForm = () => {
         setLoading(false);
         return;
       }
-      console.log("LogedIn !", res);
+      // console.log("LogedIn !", res);
       router.replace("classes");
       setLoading(false);
     } catch (error) {

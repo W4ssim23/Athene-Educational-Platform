@@ -12,7 +12,7 @@ export const authOptions = {
 
       async authorize(credentials) {
         const { username, password } = credentials;
-        console.log("executing authorize function");
+        // console.log("executing authorize function");
 
         try {
           // console.log(
@@ -56,7 +56,11 @@ export const authOptions = {
   },
   callbacks: {
     //adjust pfp , classes and other stuff for the model later
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
+      if (trigger === "update") {
+        return { ...token, ...session.user };
+      }
+
       if (user) {
         token.id = user._id;
         token.role = user.role;

@@ -1,3 +1,5 @@
+import { Button } from "@nextui-org/react";
+
 function ClassBox({ tClassName = "", style }) {
   const color =
     tClassName[1] === "p"
@@ -9,9 +11,9 @@ function ClassBox({ tClassName = "", style }) {
     backgroundColor: color,
   };
   return (
-    <div className={style} style={boxStyles}>
+    <Button className={style} style={boxStyles}>
       {tClassName && ` ${tClassName}`}
-    </div>
+    </Button>
   );
 }
 

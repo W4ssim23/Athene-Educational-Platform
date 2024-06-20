@@ -1,18 +1,17 @@
-"use client";
-
-import { Button } from "@nextui-org/react";
 import Image from "next/image";
-import { useState } from "react";
+
+import { Button, Modal, useDisclosure } from "@nextui-org/react";
 
 export default function SmallButton({
   picture,
   bg,
   size,
   hoverText = "",
-  clickFunction = () => {}, //to avoid errors , might be removed later
-  popUpComponent = null, //same
+  popUpOnClick = false,
+  popUpComponent = null,
+  extraStyle = "m-4 sm:m-0",
 }) {
-  const [loading, setLoading] = useState(false);
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   const buttonStyle = {
     width: size,
@@ -22,16 +21,10 @@ export default function SmallButton({
 
   return (
     <div className="group relative rounded-full flex items-center justify-center cursor-pointer hover:scale-105 transition-all">
-      <Button
-        onClick={clickFunction}
-        isIconOnly
-        radius="full"
-        isLoading={loading}
-        style={buttonStyle}
-      >
-        {/* {picture} */}
+      <Button isIconOnly onPress={onOpen} radius="full" style={buttonStyle}>
         <Image src={picture} alt={hoverText} />
       </Button>
+      {/* hover : */}
       <div
         className={` ${
           hoverText == ""
@@ -42,6 +35,19 @@ export default function SmallButton({
       >
         {hoverText}
       </div>
+      {/* PopUp : */}
+      {popUpOnClick && (
+        <>
+          <Modal
+            isOpen={isOpen}
+            onOpenChange={onOpenChange}
+            placement="center"
+            className={extraStyle}
+          >
+            {popUpComponent}
+          </Modal>
+        </>
+      )}
     </div>
   );
 }

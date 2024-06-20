@@ -1,3 +1,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Customizing scrollbar */
+::-webkit-scrollbar {
+  background-color: #ffffff;
+  width: 0.3vw;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #4d44b5;
+}

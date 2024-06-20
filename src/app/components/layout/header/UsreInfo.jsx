@@ -3,13 +3,8 @@
 import { useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import {
-  Avatar,
-  Dropdown,
-  DropdownTrigger,
-  DropdownMenu,
-  DropdownItem,
-} from "@nextui-org/react";
+import { Avatar, Dropdown, DropdownTrigger } from "@nextui-org/react";
+import DropDownItems from "./DropDownItems";
 
 export default function UsreInfo() {
   const [user, setUser] = useState(false);
@@ -67,15 +62,7 @@ export default function UsreInfo() {
             }
           />
         </DropdownTrigger>
-
-        <DropdownMenu aria-label="Static Actions">
-          <DropdownItem key="new">New file</DropdownItem>
-          <DropdownItem key="copy">Copy link</DropdownItem>
-          <DropdownItem key="edit">Edit file</DropdownItem>
-          <DropdownItem key="delete" className="text-danger" color="danger">
-            Delete file
-          </DropdownItem>
-        </DropdownMenu>
+        <DropDownItems isAdmin={user?.isAdmin} />
       </Dropdown>
     </div>
   );

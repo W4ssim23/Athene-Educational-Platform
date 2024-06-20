@@ -14,6 +14,7 @@ const BarItem = ({ item, pg }) => {
         <Image
           className="w-[30px] h-[30px]"
           src={pg === item.title.toLowerCase() ? item.svgSelected : item.svg}
+          as="image"
           alt=""
           priority
         />

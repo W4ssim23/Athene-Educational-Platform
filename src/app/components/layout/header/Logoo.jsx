@@ -2,6 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import Image from "next/image";
+import Link from "next/link";
 
 import { LogoP } from "@/assets";
 
@@ -18,11 +19,13 @@ export default function Logoo() {
   if (pg) return;
 
   return (
-    <Image
-      src={LogoP}
-      alt="Logo"
-      className="w-[50px] h-[50px] mr-2 sm:hidden"
-      priority
-    />
+    <Link href={"/"}>
+      <Image
+        src={LogoP}
+        alt="Logo"
+        className="w-[50px] h-[50px] mr-2 sm:hidden"
+        priority
+      />
+    </Link>
   );
 }

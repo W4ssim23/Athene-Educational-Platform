@@ -3,12 +3,14 @@
 import { ClassW, Phone, Edit, Location, Email, Parent } from "@/assets";
 import { useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
+import EditForm from "./EditForm";
 import ProfilePicture from "./ProfilePicture";
 import SmallButton from "@/app/components/ui/SmallButton";
 import ClassBox from "@/app/components/ui/ClassBox";
 import Skeleton from "./Skeleton";
 
 //WILL BE EDITED AFTER DB IS FULLY READY
+//ADD BUTTON TO UPDATE PASSWORD
 
 const Content = () => {
   const { data: session } = useSession();
@@ -53,29 +55,14 @@ const Content = () => {
             <p className="font-poppins text-[#A098AE]">Admin</p>
           )}
         </div>
-        <span
-        // onClick={() => {
-        //   setShowModal(true);
-        //   switch (userData.role) {
-        //     case "teacher":
-        //       setType("EditPT");
-        //       break;
-        //     case "student":
-        //       setType("EditPS");
-        //       break;
-        //     case "admin":
-        //       setType("EditPA");
-        //       break;
-        //     default:
-        //       setType("");
-        //   }
-        // }}
-        >
+        <span>
           <SmallButton
             picture={Edit}
             hoverText="Edit"
             bg={"#FB7D5B"}
             size={"40px"}
+            popUpOnClick={true}
+            popUpComponent={<EditForm user={user} />}
           />
         </span>
       </div>
@@ -141,7 +128,7 @@ const Content = () => {
                   <ClassBox
                     key={indx}
                     tClassName={name}
-                    style="w-[85px] text-white text-center rounded-[14px] shadow-md text-[20px] font-[500] uppercase py-3 cursor-pointer"
+                    style="w-[85px] sm:h-[47px] h-[52px]  text-white text-center rounded-[14px] shadow-md text-[20px] font-[500] uppercase py-3 cursor-pointer"
                   />
                 );
               })}
@@ -149,8 +136,6 @@ const Content = () => {
           </div>
         )}
       </div>
-
-      {/* {showModal && <Overlay data={userData} />} */}
     </div>
   );
 };
