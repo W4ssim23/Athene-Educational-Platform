@@ -13,10 +13,14 @@ import {
   Avatar,
 } from "@nextui-org/react";
 import { useAsyncList } from "@react-stately/data";
+import { useState } from "react";
 import Action from "./actions/Action";
+import MultiDelete from "./MultiDelete";
 import PhoneIcon from "./PhoneIcon";
 
 //this table still needs pagination , search and linking the adds and deletes
+//apply Skeleton while initial ffetching (the component is already created)
+// might just use the suspense , not sure if it works wlh
 
 export default function App() {
   const students = [
@@ -24,7 +28,7 @@ export default function App() {
       name: "John Doe",
       firstName: "John",
       lastName: "Doe",
-      phone: "555-1234",
+      phone: "0658693596",
       email: "john.doe@example.com",
       address: "123 Main St, Springfield, IL",
       parentName: "Jane Doe",
@@ -174,6 +178,8 @@ export default function App() {
     },
   });
 
+  const [selected, setSelected] = useState({});
+
   return (
     <div className="flex flex-col gap-3">
       <Table
@@ -183,19 +189,38 @@ export default function App() {
         sortDescriptor={list.sortDescriptor}
         onSortChange={list.sort}
         classNames={classNames}
+        onSelectionChange={(selected) => {
+          // console.log(selected);
+          setSelected(selected);
+        }}
       >
         <TableHeader>
           {columns.map((column) => (
             <TableColumn
               key={column.key}
-              className={column.key !== "name" ? "hidden md:table-cell " : ""}
+              className={
+                column.key === "name"
+                  ? ""
+                  : column.key === "gender"
+                  ? "hidden wwl:table-cell"
+                  : column.key === "parentName"
+                  ? "hidden wl:table-cell"
+                  : "hidden md:table-cell"
+              }
               allowsSorting
             >
               {column.name}
               {/* will be firstName + LastName */}
             </TableColumn>
           ))}
-          <TableColumn>Actions</TableColumn>
+          {/* pass other than selected , this is temporary */}
+          <TableColumn className="p-0">
+            {selected.size || selected == "all" ? (
+              <MultiDelete data={selected} />
+            ) : (
+              "Actions"
+            )}
+          </TableColumn>
         </TableHeader>
         <TableBody emptyContent={"No Students to display."}>
           {list.items.map((student, index) => (
@@ -221,13 +246,13 @@ export default function App() {
               <TableCell className="hidden md:table-cell">
                 <GradeBox tClassName={getKeyValue(student, "grade")} />
               </TableCell>
-              <TableCell className="hidden md:table-cell">
+              <TableCell className="hidden wl:table-cell">
                 {getKeyValue(student, "parentName")}
               </TableCell>
               <TableCell className="hidden md:table-cell p-4 pr-6">
                 <ClassBox tClassName={getKeyValue(student, "class")} />
               </TableCell>
-              <TableCell className="hidden md:table-cell">
+              <TableCell className="hidden wwl:table-cell">
                 {getKeyValue(student, "gender")}
               </TableCell>
               <TableCell>

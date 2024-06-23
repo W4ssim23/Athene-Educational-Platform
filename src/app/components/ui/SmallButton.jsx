@@ -1,5 +1,3 @@
-import Image from "next/image";
-
 import { Button, Modal, useDisclosure } from "@nextui-org/react";
 
 export default function SmallButton({
@@ -21,8 +19,14 @@ export default function SmallButton({
 
   return (
     <div className="group relative rounded-full flex items-center justify-center cursor-pointer hover:scale-105 transition-all">
-      <Button isIconOnly onPress={onOpen} radius="full" style={buttonStyle}>
-        <Image src={picture} alt={hoverText} />
+      <Button
+        isIconOnly
+        onPress={onOpen}
+        radius="full"
+        style={buttonStyle}
+        className="p-2"
+      >
+        {picture}
       </Button>
       {/* hover : */}
       <div

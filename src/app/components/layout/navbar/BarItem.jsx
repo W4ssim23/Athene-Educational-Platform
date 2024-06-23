@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Image from "next/image";
 
 const BarItem = ({ item, pg }) => {
   return (
@@ -11,13 +10,10 @@ const BarItem = ({ item, pg }) => {
       key={item.title}
     >
       <div className={`flex items-center gap-6 `}>
-        <Image
-          className="w-[30px] h-[30px]"
-          src={pg === item.title.toLowerCase() ? item.svgSelected : item.svg}
-          as="image"
-          alt=""
-          priority
-        />
+        <div className="flex w-[30px] h-[30px] overflow-hidden">
+          {pg === item.title.toLowerCase() ? item.svgSelected : item.svg}
+        </div>
+
         <p
           className={`text-[18px] font-[500] hidden lg:block ${
             pg === item.title.toLowerCase() ? "text-primary" : "text-pfpclr"

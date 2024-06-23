@@ -37,6 +37,9 @@ module.exports = {
         sm: "768px",
         md: "1060px",
         lg: "1200px",
+        //ignore wl and wwl but never remove them hhhhhhh
+        wl: "1250px",
+        wwl: "1440px",
         xl: "1700px",
       },
       backgroundColor: {

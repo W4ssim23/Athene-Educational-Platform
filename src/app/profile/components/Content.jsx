@@ -1,6 +1,6 @@
 "use client";
 
-import { ClassW, Phone, Edit, Location, Email, Parent } from "@/assets";
+import { ClassW, Phone, Edit, Location, Email, Parent } from "../icons";
 import { useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
 import EditForm from "./EditForm";
@@ -57,7 +57,7 @@ const Content = () => {
         </div>
         <span>
           <SmallButton
-            picture={Edit}
+            picture={<Edit />}
             hoverText="Edit"
             bg={"#FB7D5B"}
             size={"40px"}
@@ -71,7 +71,11 @@ const Content = () => {
         <div className="flex flex-col m-1 ml-3 mb-3">
           {user?.parentName && (
             <div className="flex m-1 my-2 items-center">
-              <SmallButton picture={Parent} bg={"#4D44B5"} size={buttonSizes} />
+              <SmallButton
+                picture={<Parent />}
+                bg={"#4D44B5"}
+                size={buttonSizes}
+              />
               <p className={`text-[#303972] text-base m-1 ml-3 font-bold`}>
                 {user.parentName}
               </p>
@@ -80,7 +84,7 @@ const Content = () => {
           {user?.address && (
             <div className="flex m-1 my-2 items-center">
               <SmallButton
-                picture={Location}
+                picture={<Location />}
                 bg={"#4D44B5"}
                 size={buttonSizes}
               />
@@ -91,14 +95,18 @@ const Content = () => {
           )}
           {user.phone && (
             <div className="flex m-1 my-2 items-center">
-              <SmallButton picture={Phone} size={buttonSizes} />
+              <SmallButton picture={<Phone />} size={buttonSizes} />
               <p className={`text-[#303972] text-base m-1 ml-3 font-bold`}>
                 {user.phone ?? "no phone number"}
               </p>
             </div>
           )}
           <div className="flex m-1 my-2 items-center">
-            <SmallButton picture={Email} bg={"#FCC43E"} size={buttonSizes} />
+            <SmallButton
+              picture={<Email />}
+              bg={"#FCC43E"}
+              size={buttonSizes}
+            />
             <p className={`text-[#303972] text-base m-1 ml-3 font-bold`}>
               {user.email ?? "no email"}
             </p>
@@ -117,7 +125,11 @@ const Content = () => {
         {(user.role === "teacher" || user.role === "admin") && (
           <div className="m-2 ml-3">
             <div className="flex m-1 my-2 items-center">
-              <SmallButton picture={ClassW} bg={"#4CBC9E"} size={buttonSizes} />
+              <SmallButton
+                picture={<ClassW />}
+                bg={"#4CBC9E"}
+                size={buttonSizes}
+              />
               <p className={`text-[#303972] text-base m-1 ml-3 font-bold`}>
                 {"Classes :"}
               </p>
