@@ -18,7 +18,7 @@ export default function RootLayout({ children }) {
       <body className={poppins.className}>
         <AuthProvider>
           <NavBar />
-          <div className="sm:pl-[100px] lg:pl-[18%] pb-[75px] sm:pb-0 bg-bgfakeWhite">
+          <div className="sm:pl-[100px] lg:pl-[18%] bg-bgfakeWhite">
             <div className="p-[15px] sm:p-[30px] flex flex-col gap-9">
               <Header />
               {children}

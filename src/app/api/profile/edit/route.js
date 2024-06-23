@@ -13,17 +13,26 @@ export async function POST(req) {
     const resdata = await req.json();
 
     if (Object.keys(filterEmptyValues(resdata)).length === 0)
-      return NextResponse.json({ message: "No data !" }, { status: 400 });
+      return NextResponse.json(
+        // { message: "No data !" },
+        { status: 400 }
+      );
 
     if (Object.keys(filterEmptyValues(resdata)).length === 1 && resdata.id)
-      return NextResponse.json({ message: "No data !" }, { status: 400 });
+      return NextResponse.json(
+        // { message: "No data !" },
+        { status: 400 }
+      );
 
     if (!resdata.id)
-      return NextResponse.json({ message: "No user id !" }, { status: 400 });
+      return NextResponse.json(
+        // { message: "No user id !" },
+        { status: 400 }
+      );
 
     if (resdata.id !== user.id)
       return NextResponse.json(
-        { message: "You are not authorized to edit this profile" },
+        // { message: "You are not authorized to edit this profile" },
         { status: 401 }
       );
 
@@ -40,17 +49,20 @@ export async function POST(req) {
     );
 
     if (!updatedUser) {
-      return NextResponse.json({ message: "User not found" }, { status: 404 });
+      return NextResponse.json(
+        // { message: "User not found" },
+        { status: 404 }
+      );
     }
 
     return NextResponse.json(
-      { message: "Profile updated successfully." },
+      // { message: "Profile updated successfully." },
       { status: 201 }
     );
   } catch (error) {
     console.error("Update error:", error);
     return NextResponse.json(
-      { message: "An error occurred while edeting the profile" },
+      // { message: "An error occurred while edeting the profile" },
       { status: 500 }
     );
   }

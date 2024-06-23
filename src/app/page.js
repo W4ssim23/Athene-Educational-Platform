@@ -34,7 +34,7 @@ export default function Home() {
       <h2 className="text-4xl font-bold w-3/4 text-center">
         {session.user.firstName} {session.user.lastName}
       </h2>
-      <Link href={"/classes"}>
+      <Link href="/classes">
         <Button
           radius="full"
           className="bg-gradient-to-tr from-primary to-pink-500 text-white shadow-lg mt-4"

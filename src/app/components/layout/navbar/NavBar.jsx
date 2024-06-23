@@ -131,7 +131,7 @@ const Studentlist = [
 const Teacherlist = [
   {
     title: "Classes",
-    theLink: "/classes/teacher",
+    theLink: "/classes",
     svg: Class,
     svgSelected: Classselected,
     key: 0,
