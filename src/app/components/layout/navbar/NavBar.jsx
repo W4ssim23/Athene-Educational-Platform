@@ -11,8 +11,8 @@ import {
   Userslected,
   Calendarslected,
   Classselected,
-  bells,
-  bellsselected,
+  Bells,
+  Bellsselected,
   // Absence,
   // Absenceg,
   Chat,
@@ -21,9 +21,13 @@ import {
 
 import SideBar from "./SideBar";
 import BottomBar from "./BottomBar";
+import Skeleton from "./Skeleton";
 import { usePathname } from "next/navigation";
+import { useSession } from "next-auth/react";
 
-export default function NavBar({ role = "admin" }) {
+export default function NavBar() {
+  const { data: session } = useSession();
+  const role = session?.user.role;
   function getFirstElement(path) {
     if (path === "/") {
       return null;
@@ -37,6 +41,10 @@ export default function NavBar({ role = "admin" }) {
 
   if (pg === "login") {
     return;
+  }
+
+  if (!session) {
+    return <Skeleton />;
   }
 
   return (
@@ -102,8 +110,8 @@ const Studentlist = [
   {
     title: "Notifications",
     theLink: "/notifications",
-    svg: <bells />,
-    svgSelected: <bellsselected />,
+    svg: <Bells />,
+    svgSelected: <Bellsselected />,
     key: 1,
   },
   {
@@ -139,8 +147,8 @@ const Teacherlist = [
   {
     title: "Notifications",
     theLink: "/notifications",
-    svg: <bells />,
-    svgSelected: <bellsselected />,
+    svg: <Bells />,
+    svgSelected: <Bellsselected />,
     key: 1,
   },
   {

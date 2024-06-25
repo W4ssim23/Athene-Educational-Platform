@@ -8,8 +8,8 @@ import Teacherselected from "./Teacherselected.jsx";
 import Userslected from "./Userslected.jsx";
 import Calendarslected from "./Calendarslected.jsx";
 import Classselected from "./Classselected.jsx";
-import bells from "./bells.jsx";
-import bellsselected from "./bellsselected.jsx";
+import Bells from "./bells.jsx";
+import Bellsselected from "./bellsselected.jsx";
 // Absence,
 // Absenceg,
 import Chat from "./Chat.jsx";
@@ -26,8 +26,8 @@ export {
   Userslected,
   Calendarslected,
   Classselected,
-  bells,
-  bellsselected,
+  Bells,
+  Bellsselected,
   Chat,
   ChatSelected,
 };

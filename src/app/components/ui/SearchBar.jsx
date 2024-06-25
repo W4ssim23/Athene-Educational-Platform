@@ -1,4 +1,4 @@
-import { Search } from "@/assets";
+import Search from "./Search";
 import { Input } from "@nextui-org/react";
 import Image from "next/image";
 
@@ -27,11 +27,9 @@ const SearchBar = () => {
       }}
       placeholder="Search..."
       startContent={
-        <Image
-          src={Search}
-          className="mb-0.5 text-slate-400 pointer-events-none flex-shrink-0"
-          alt="search"
-        />
+        <div className="mb-0.5 text-slate-400 pointer-events-none flex-shrink-0">
+          <Search />
+        </div>
       }
     />
   );

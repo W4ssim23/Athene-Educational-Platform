@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { filterEmptyValues } from "@/lib";
-import User from "@/app/models/User";
+import User from "@/app/lib/models/User";
 import { connectMongoDB } from "../../../lib/mongodb";
 
 export async function POST(req) {
@@ -11,6 +11,8 @@ export async function POST(req) {
     const { user } = session;
 
     const resdata = await req.json();
+
+    // console.log(resdata);
 
     if (Object.keys(filterEmptyValues(resdata)).length === 0)
       return NextResponse.json(
@@ -30,11 +32,12 @@ export async function POST(req) {
         { status: 400 }
       );
 
-    if (resdata.id !== user.id)
+    if (resdata.id !== user.id) {
       return NextResponse.json(
         // { message: "You are not authorized to edit this profile" },
         { status: 401 }
       );
+    }
 
     const data = filterEmptyValues(resdata);
 

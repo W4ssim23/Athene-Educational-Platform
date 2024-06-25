@@ -7,15 +7,14 @@ import {
   ModalBody,
   ModalFooter,
   Input,
-  Textarea,
+  Select,
+  SelectItem,
 } from "@nextui-org/react";
 import { useForm } from "react-hook-form";
 import { useRef } from "react";
 import { filterEmptyValues } from "@/lib";
-import { useSession } from "next-auth/react";
 
 export default function EditForm({ user }) {
-  const { data: session, update } = useSession();
   const {
     register,
     handleSubmit,
@@ -24,38 +23,34 @@ export default function EditForm({ user }) {
   const submitButtonRef = useRef(null);
   const onCloseRef = useRef(null);
 
-  const handleSessionUpdate = async (data) => {
-    await update({
-      ...session,
-      user: {
-        ...session.user,
-        ...data,
-      },
-    });
-  };
+  const specialities = ["Maths", "Physics", "Chemistry", "Biology", "English"]; //add to it
 
   const onSubmit = async (data) => {
-    if (Object.keys(filterEmptyValues(data)).length === 0) {
+    if (
+      Object.keys(filterEmptyValues(data)).length === 0 ||
+      (data.speciality === user.speciality &&
+        Object.keys(filterEmptyValues(data)).length === 1)
+    ) {
       onCloseRef.current();
       return;
     }
 
+    //DATA SHOULD BE CLEARED FROM THE REPEATED SPECIALITY
+
     try {
-      const response = await fetch("/api/profile/edit", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ ...filterEmptyValues(data), id: user.id }),
-      });
-
-      // const res = await response.json();
-      // console.log(res);
-
-      if (response.ok) {
-        await handleSessionUpdate(filterEmptyValues(data));
-        onCloseRef.current();
-      }
+      //   const response = await fetch("/api/profile/edit", {
+      //     method: "POST",
+      //     headers: {
+      //       "Content-Type": "application/json",
+      //     },
+      //     body: JSON.stringify({ ...filterEmptyValues(data), id: user.id }),
+      //   });
+      //   //   const res = await response.json();
+      //   //   console.log(res);
+      //   if (response.ok) {
+      //     await handleSessionUpdate(filterEmptyValues(data));
+      //     onCloseRef.current();
+      //   }
     } catch (error) {
       console.error("EditForm error:", error);
     }
@@ -68,7 +63,7 @@ export default function EditForm({ user }) {
         return (
           <>
             <ModalHeader className="flex flex-col gap-1">
-              Edit Profile
+              Edit Teacher
             </ModalHeader>
             <ModalBody>
               <form
@@ -79,10 +74,8 @@ export default function EditForm({ user }) {
                   label="First Name"
                   placeholder={user.firstName}
                   variant="bordered"
-                  isDisabled={!user.isAdmin}
                   {...register("firstName", {
                     validate: (value) => {
-                      if (!user.isAdmin) return true;
                       if (value === user.firstName)
                         return "Must be different from current name";
                       if (value.length >= 2 || value.length === 0) return true;
@@ -96,10 +89,8 @@ export default function EditForm({ user }) {
                   label="Last Name"
                   placeholder={user.lastName}
                   variant="bordered"
-                  isDisabled={!user.isAdmin}
                   {...register("lastName", {
                     validate: (value) => {
-                      if (!user.isAdmin) return true;
                       if (value === user.lastName)
                         return "Must be different from current name";
                       if (value.length >= 2 || value.length === 0) return true;
@@ -159,12 +150,25 @@ export default function EditForm({ user }) {
                   isInvalid={!!errors.email}
                   errorMessage={errors?.email?.message ?? ""}
                 />
-                <Textarea
-                  label="About"
-                  placeholder={user.about}
+                <Select
+                  label="Teacher of"
+                  defaultSelectedKeys={[user.speciality ?? ""]}
                   variant="bordered"
-                  {...register("about")}
-                />
+                  {...register("speciality", {
+                    validate: (value) => {
+                      if (value.length === 0) return "Required";
+                      return true;
+                    },
+                  })}
+                  isInvalid={!!errors.speciality}
+                  errorMessage={errors?.speciality?.message ?? ""}
+                >
+                  {specialities.map((speciality) => (
+                    <SelectItem key={speciality} value={speciality}>
+                      {speciality}
+                    </SelectItem>
+                  ))}
+                </Select>
                 <button
                   ref={submitButtonRef}
                   className="hidden"

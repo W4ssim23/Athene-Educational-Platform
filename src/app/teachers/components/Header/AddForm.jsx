@@ -7,15 +7,15 @@ import {
   ModalBody,
   ModalFooter,
   Input,
-  Textarea,
+  Select,
+  SelectItem,
 } from "@nextui-org/react";
 import { useForm } from "react-hook-form";
-import { useRef } from "react";
-import { filterEmptyValues } from "@/lib";
-import { useSession } from "next-auth/react";
+import { useRef, useState } from "react";
 
-export default function EditForm({ user }) {
-  const { data: session, update } = useSession();
+export default function AddForm() {
+  const specialities = ["Maths", "Physics", "Chemistry", "Biology", "English"]; //add to it
+
   const {
     register,
     handleSubmit,
@@ -24,41 +24,33 @@ export default function EditForm({ user }) {
   const submitButtonRef = useRef(null);
   const onCloseRef = useRef(null);
 
-  const handleSessionUpdate = async (data) => {
-    await update({
-      ...session,
-      user: {
-        ...session.user,
-        ...data,
-      },
-    });
-  };
-
   const onSubmit = async (data) => {
-    if (Object.keys(filterEmptyValues(data)).length === 0) {
-      onCloseRef.current();
-      return;
-    }
+    console.log("submition !");
+    console.log(data);
+    // if (Object.keys(filterEmptyValues(data)).length === 0) {
+    //   onCloseRef.current();
+    //   return;
+    // }
 
-    try {
-      const response = await fetch("/api/profile/edit", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ ...filterEmptyValues(data), id: user.id }),
-      });
+    // try {
+    //   const response = await fetch("/api/profile/edit", {
+    //     method: "POST",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: JSON.stringify({ ...filterEmptyValues(data), id: user.id }),
+    //   });
 
-      // const res = await response.json();
-      // console.log(res);
+    //   const res = await response.json();
+    //   // console.log(res);
 
-      if (response.ok) {
-        await handleSessionUpdate(filterEmptyValues(data));
-        onCloseRef.current();
-      }
-    } catch (error) {
-      console.error("EditForm error:", error);
-    }
+    //   if (response.ok) {
+    //     await handleSessionUpdate(filterEmptyValues(data));
+    //     onCloseRef.current();
+    //   }
+    // } catch (error) {
+    //   console.error("EditForm error:", error);
+    // }
   };
 
   return (
@@ -68,7 +60,7 @@ export default function EditForm({ user }) {
         return (
           <>
             <ModalHeader className="flex flex-col gap-1">
-              Edit Profile
+              Add Teacher
             </ModalHeader>
             <ModalBody>
               <form
@@ -77,15 +69,10 @@ export default function EditForm({ user }) {
               >
                 <Input
                   label="First Name"
-                  placeholder={user.firstName}
                   variant="bordered"
-                  isDisabled={!user.isAdmin}
                   {...register("firstName", {
                     validate: (value) => {
-                      if (!user.isAdmin) return true;
-                      if (value === user.firstName)
-                        return "Must be different from current name";
-                      if (value.length >= 2 || value.length === 0) return true;
+                      if (value.length >= 2) return true;
                       return "Must be at least 2 characters long";
                     },
                   })}
@@ -94,15 +81,10 @@ export default function EditForm({ user }) {
                 />
                 <Input
                   label="Last Name"
-                  placeholder={user.lastName}
                   variant="bordered"
-                  isDisabled={!user.isAdmin}
                   {...register("lastName", {
                     validate: (value) => {
-                      if (!user.isAdmin) return true;
-                      if (value === user.lastName)
-                        return "Must be different from current name";
-                      if (value.length >= 2 || value.length === 0) return true;
+                      if (value.length >= 2) return true;
                       return "Must be at least 2 characters long";
                     },
                   })}
@@ -111,13 +93,10 @@ export default function EditForm({ user }) {
                 />
                 <Input
                   label="Address"
-                  placeholder={user.address}
                   variant="bordered"
                   {...register("address", {
                     validate: (value) => {
-                      if (value === user.address)
-                        return "Must be different from current address";
-                      if (value.length >= 2 || value.length === 0) return true;
+                      if (value.length >= 2) return true;
                       return "Must be at least 2 characters long";
                     },
                   })}
@@ -127,13 +106,11 @@ export default function EditForm({ user }) {
                 <Input
                   label="Phone"
                   type="tel"
-                  placeholder={user.phone}
                   variant="bordered"
                   {...register("phone", {
                     validate: (value) => {
-                      if (value === user.phone)
-                        return "Must be different from current phone";
-                      if (value.length >= 10 || value.length === 0) return true;
+                      if (value.length === 0) return "Phone number required";
+                      if (value.length >= 10) return true;
                       return "Phone number not valid";
                     },
                   })}
@@ -142,16 +119,11 @@ export default function EditForm({ user }) {
                 />
                 <Input
                   label="Email"
-                  placeholder={user.email}
                   variant="bordered"
                   {...register("email", {
                     validate: (value) => {
-                      if (value === user.email)
-                        return "Must be different from current email";
-                      if (
-                        (value.includes("@") && value.includes(".")) ||
-                        value.length === 0
-                      )
+                      if (value.length === 0) return "Email required";
+                      if (value.includes("@") && value.includes("."))
                         return true;
                       return "Email not valid";
                     },
@@ -159,12 +131,24 @@ export default function EditForm({ user }) {
                   isInvalid={!!errors.email}
                   errorMessage={errors?.email?.message ?? ""}
                 />
-                <Textarea
-                  label="About"
-                  placeholder={user.about}
+                <Select
+                  label="Teacher of"
                   variant="bordered"
-                  {...register("about")}
-                />
+                  {...register("speciality", {
+                    validate: (value) => {
+                      if (value.length === 0) return "Required";
+                      return true;
+                    },
+                  })}
+                  isInvalid={!!errors.speciality}
+                  errorMessage={errors?.speciality?.message ?? ""}
+                >
+                  {specialities.map((speciality) => (
+                    <SelectItem key={speciality} value={speciality}>
+                      {speciality}
+                    </SelectItem>
+                  ))}
+                </Select>
                 <button
                   ref={submitButtonRef}
                   className="hidden"

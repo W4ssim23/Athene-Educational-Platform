@@ -1,17 +1,17 @@
-import { LogoW } from "@/assets";
+import LogoW from "./LogoW";
 import BarItem from "./BarItem";
 import Link from "next/link";
-import Image from "next/image";
 
 const SideBar = ({ pg, items }) => {
   return (
     <>
-      {/* <div className="lg:w-[18%] w-[110px] h-screen hidden sm:block"></div> */}
       <div className="fixed top-0 left-0 lg:w-[18%] w-[100px] h-screen bg-primary hidden sm:flex">
         <ul className="flex flex-col flex-1 items-center w-full mt-9 gap-3">
           <div className="mb-[25px] w-fit cursor-pointer">
             <Link href={"/"}>
-              <Image className="ss:w-[50px] lg:w-[60px]" src={LogoW} alt="" />
+              <div className="ss:w-[50px] lg:w-[60px]">
+                <LogoW />
+              </div>
             </Link>
           </div>
           {items.map((item, index) => (

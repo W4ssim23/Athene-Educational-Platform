@@ -16,6 +16,7 @@ export default function MultiDelete({ data }) {
     <div>
       <Button
         color="danger"
+        variant="flat"
         className="ml-[-10px] mb-1"
         radius="full"
         onClick={onOpen}
