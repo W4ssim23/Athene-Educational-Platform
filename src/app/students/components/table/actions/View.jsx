@@ -17,14 +17,15 @@ export default function View({ data }) {
               Student Details
             </ModalHeader>
             <ModalBody className="flex flex-col items-center">
-              <div className="flex flex-col justify-center md:items-center items-start bg-white px-8 py-5 rounded-lg gap-5">
+              <div className="flex flex-col justify-center md:items-center items-start bg-white  rounded-lg gap-5">
                 <div className="flex md:flex-col gap-6 md:gap-2 items-center justify-center ">
                   <Avatar src={data.pfp} className="w-20 h-20 text-large" />
                   <p className="text-large font-[600] text-blueTitle">
                     {data.lastName} {data.firstName}
                   </p>
                 </div>
-                <div className="flex flex-col gap-3 items-center">
+                {/* needs to be edetid to show the from the start : (this div does not effect*/}
+                <div className="flex flex-col gap-3 items-start w-full">
                   <div className="flex items-center gap-2">
                     <p className="font-poppins text-[16px] text-blueTitle font-[600] text-nowrap">
                       Email :{" "}

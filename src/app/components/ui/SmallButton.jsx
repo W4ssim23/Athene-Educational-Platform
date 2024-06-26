@@ -8,6 +8,7 @@ export default function SmallButton({
   popUpOnClick = false,
   popUpComponent = null,
   extraStyle = "m-4 sm:m-0",
+  onClick,
 }) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
@@ -25,6 +26,7 @@ export default function SmallButton({
         radius="full"
         style={buttonStyle}
         className="p-2"
+        onClick={onClick}
       >
         {picture}
       </Button>
