@@ -1,3 +1,5 @@
+"use client";
+
 import { Button, Modal, useDisclosure } from "@nextui-org/react";
 
 export default function SmallButton({

@@ -15,7 +15,7 @@ const EventElement = ({ role, eventData }) => {
         <h3 className="text-[#303972] font-poppins font-bold text-[25px] capitalize">
           {eventData.title}
         </h3>
-        <p className="sm:text-lg text-black pl-2 sm:max-w-[85%] sm:min-w-[372px] ">
+        <p className="font-poppins sm:text-lg text-black pl-2 sm:max-w-[85%] sm:min-w-[372px] ">
           {eventData.description}
         </p>
         <div>
