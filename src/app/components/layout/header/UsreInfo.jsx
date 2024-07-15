@@ -55,7 +55,7 @@ export default function UsreInfo() {
       <Dropdown>
         <DropdownTrigger>
           <Avatar
-            showFallback
+            fallback
             src={user?.pfp}
             className={
               "h-[48px] w-[48px] hover:border-4 hover:border-primary cursor-pointer"

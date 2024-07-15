@@ -7,11 +7,46 @@ import {
   ModalFooter,
   useDisclosure,
 } from "@nextui-org/react";
+import { useState, useContext } from "react";
+import FetchingContext from "@/app/context";
 
 export default function MultiDelete({ data }) {
-  //   console.log(data);
-  //   console.log(typeof data);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const { students, setStudents } = useContext(FetchingContext);
+
+  const handleDelete = async () => {
+    setIsLoading(true);
+    try {
+      const studentIds = Array.from(data);
+      const response = await fetch("/api/students/delete", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ studentIds }),
+      });
+
+      const result = await response.json();
+      // console.log("Result:", result);
+
+      if (response.ok) {
+        setStudents(
+          students.filter((student) => !studentIds.includes(student.id))
+        );
+        onClose();
+      } else {
+        alert(result.message);
+      }
+    } catch (error) {
+      console.error("Error deleting students:", error);
+      alert("An error occurred while deleting the students.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div>
       <Button
@@ -30,34 +65,33 @@ export default function MultiDelete({ data }) {
         className="m-2"
       >
         <ModalContent>
-          {(onClose) => {
-            return (
-              <>
-                <ModalHeader className="flex flex-col gap-1">
-                  Delete Students
-                </ModalHeader>
-                <ModalBody className="flex flex-col items-center">
-                  <div className="flex flex-col gap-6 items-center justify-center ">
-                    <p className=" text-red font-bold text-[20px] text-center">
-                      Are you sure u want to delete these pookie Students ??
-                    </p>
-                    {/* <Avatar src={data.pfp} className="w-20 h-20 text-large" />
-                <p className="text-large font-[600] text-blueTitle">
-                  {data.lastName} {data.firstName}
-                </p> */}
-                  </div>
-                </ModalBody>
-                <ModalFooter className="flex justify-center gap-6">
-                  <Button color="primary" variant="flat" onPress={onClose}>
-                    Cancel
-                  </Button>
-                  <Button color="danger" onClick={onClose}>
-                    Confirm
-                  </Button>
-                </ModalFooter>
-              </>
-            );
-          }}
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">
+                Delete Students
+              </ModalHeader>
+              <ModalBody className="flex flex-col items-center">
+                <div className="flex flex-col gap-6 items-center justify-center">
+                  <p className="text-red font-bold text-[20px] text-center">
+                    Are you sure you want to delete these students?
+                  </p>
+                </div>
+              </ModalBody>
+              <ModalFooter className="flex justify-center gap-6">
+                <Button color="primary" variant="flat" onPress={onClose}>
+                  Cancel
+                </Button>
+                <Button
+                  color="danger"
+                  onClick={handleDelete}
+                  isLoading={isLoading}
+                  disabled={isLoading}
+                >
+                  Confirm
+                </Button>
+              </ModalFooter>
+            </>
+          )}
         </ModalContent>
       </Modal>
     </div>

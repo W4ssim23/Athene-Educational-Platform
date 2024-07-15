@@ -8,260 +8,169 @@ import {
   TableRow,
   TableCell,
   getKeyValue,
-  Spinner,
-  Button,
   Avatar,
 } from "@nextui-org/react";
-import { useAsyncList } from "@react-stately/data";
-import { useState } from "react";
+import { useState, useContext, useEffect } from "react";
+import FetchingContext from "@/app/context";
 import Action from "./actions/Action";
 import MultiDelete from "./MultiDelete";
 import PhoneIcon from "./PhoneIcon";
 
-//this table still needs pagination , search and linking the adds and deletes
-//apply Skeleton while initial ffetching (the component is already created)
-// might just use the suspense , not sure if it works wlh
-
 export default function App() {
-  const students = [
-    {
-      name: "John Doe",
-      firstName: "John",
-      lastName: "Doe",
-      phone: "0658693596",
-      email: "john.doe@example.com",
-      address: "123 Main St, Springfield, IL",
-      parentName: "Jane Doe",
-      grade: "cem",
-      class: "2m2",
-      gender: "Male",
-      pfp: "https://cdn.pfps.gg/pfps/4309-jojo-12.png",
-    },
-    {
-      name: "Alice Smith",
-      firstName: "Alice",
-      lastName: "Smith",
-      phone: "555-5678",
-      email: "alice.smith@example.com",
-      address: "456 Oak St, Springfield, IL",
-      parentName: "Robert Smith",
-      grade: "lycee",
-      class: "1S1",
-      gender: "Female",
-      pfp: "https://cdn.pfps.gg/pfps/2392-jojo-13.png",
-    },
-    {
-      name: "Michael Johnson",
-      firstName: "Michael",
-      lastName: "Johnson",
-      phone: "555-8765",
-      email: "michael.johnson@example.com",
-      address: "789 Pine St, Springfield, IL",
-      parentName: "Laura Johnson",
-      grade: "prm",
-      class: "1p1",
-      gender: "Male",
-      pfp: "https://cdn.pfps.gg/pfps/2392-jojo-13.png",
-    },
-    {
-      name: "Emma Brown",
-      firstName: "Emma",
-      lastName: "Brown",
-      phone: "555-4321",
-      email: "emma.brown@example.com",
-      address: "321 Birch St, Springfield, IL",
-      parentName: "James Brown",
-      grade: "lycee",
-      class: "1S1",
-      gender: "Female",
-      pfp: "https://cdn.pfps.gg/pfps/4309-jojo-12.png",
-    },
-    {
-      name: "David Wilson",
-      firstName: "David",
-      lastName: "Wilson",
-      phone: "555-6789",
-      email: "david.wilson@example.com",
-      address: "654 Cedar St, Springfield, IL",
-      parentName: "Patricia Wilson",
-      grade: "prm",
-      class: "1p1",
-      gender: "Male",
-      pfp: "https://cdn.pfps.gg/pfps/2392-jojo-13.png",
-    },
-    {
-      name: "Olivia Taylor",
-      firstName: "Olivia",
-      lastName: "Taylor",
-      phone: "555-9876",
-      email: "olivia.taylor@example.com",
-      address: "987 Maple St, Springfield, IL",
-      parentName: "William Taylor",
-      grade: "cem",
-      class: "2m2",
-      gender: "Female",
-      pfp: "https://cdn.pfps.gg/pfps/4309-jojo-12.png",
-    },
-    {
-      name: "Daniel Martinez",
-      firstName: "Daniel",
-      lastName: "Martinez",
-      phone: "555-5432",
-      email: "daniel.martinez@example.com",
-      address: "432 Willow St, Springfield, IL",
-      parentName: "Maria Martinez",
-      grade: "lycee",
-      class: "1S1",
-      gender: "Male",
-      pfp: "https://cdn.pfps.gg/pfps/2392-jojo-13.png",
-    },
-    {
-      name: "Sophia Anderson",
-      firstName: "Sophia",
-      lastName: "Anderson",
-      phone: "555-8764",
-      email: "sophia.anderson@example.com",
-      address: "876 Elm St, Springfield, IL",
-      parentName: "Richard Anderson",
-      grade: "cem",
-      class: "2m2",
-      gender: "Female",
-      pfp: "https://cdn.pfps.gg/pfps/2392-jojo-13.png",
-    },
-    {
-      name: "James Thomas",
-      firstName: "James",
-      lastName: "Thomas",
-      phone: "555-1235",
-      email: "james.thomas@example.com",
-      address: "1234 Spruce St, Springfield, IL",
-      parentName: "Nancy Thomas",
-      grade: "prm",
-      class: "1p1",
-      gender: "Male",
-      pfp: "https://cdn.pfps.gg/pfps/2392-jojo-13.png",
-    },
-    {
-      name: "Isabella Garcia",
-      firstName: "Isabella",
-      lastName: "Garcia",
-      phone: "555-9875",
-      email: "isabella.garcia@example.com",
-      address: "9876 Redwood St, Springfield, IL",
-      parentName: "David Garcia",
-      grade: "lycee",
-      class: "1S1",
-      gender: "Female",
-      pfp: "https://cdn.pfps.gg/pfps/2392-jojo-13.png",
-    },
-  ];
+  const { students, setStudents } = useContext(FetchingContext);
+  const [sortDescriptor, setSortDescriptor] = useState({
+    column: "name",
+    direction: "ascending",
+  });
+  const [isLoading, setIsLoading] = useState(true);
+  const [items, setItems] = useState([]);
+  const [selected, setSelected] = useState({});
 
-  const classNames = {
-    th: ["bg-transparent", "border-b-1", "border-gray-300"],
+  const fetchStudents = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch("/api/students", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        console.log("Failed to fetch students");
+        setItems([]);
+        return;
+      }
+
+      const data = await response.json();
+      setStudents(data.students);
+      setItems(data.students);
+    } catch (error) {
+      console.error(error);
+      setItems([]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  let list = useAsyncList({
-    async load() {
-      //fetching logic
-      return {
-        items: students,
-      };
-    },
-    sort: ({ items, sortDescriptor }) => {
-      return {
-        items: items.sort((a, b) => {
-          return a[sortDescriptor.column].localeCompare(
-            b[sortDescriptor.column]
-          );
-        }),
-      };
-    },
-  });
+  useEffect(() => {
+    fetchStudents();
+  }, []);
 
-  const [selected, setSelected] = useState({});
+  useEffect(() => {
+    if (students) {
+      setItems(students);
+    }
+  }, [students]);
+
+  const handleSortChange = (columnKey) => {
+    setSortDescriptor((prevSortDescriptor) => {
+      let direction = "ascending";
+      if (
+        prevSortDescriptor.column === columnKey &&
+        prevSortDescriptor.direction === "ascending"
+      ) {
+        direction = "descending";
+      }
+      return { column: columnKey, direction };
+    });
+    sortItems(columnKey, direction);
+  };
+
+  const sortItems = (columnKey, direction) => {
+    const sortedItems = [...items].sort((a, b) => {
+      let comparison = a[columnKey].localeCompare(b[columnKey]);
+      if (direction === "descending") {
+        comparison *= -1;
+      }
+      return comparison;
+    });
+    setItems(sortedItems);
+  };
 
   return (
     <div className="flex flex-col gap-3">
-      <Table
-        color={"primary"}
-        selectionMode="multiple"
-        aria-label="Students table"
-        sortDescriptor={list.sortDescriptor}
-        onSortChange={list.sort}
-        classNames={classNames}
-        onSelectionChange={(selected) => {
-          // console.log(selected);
-          setSelected(selected);
-        }}
-      >
-        <TableHeader>
-          {columns.map((column) => (
-            <TableColumn
-              key={column.key}
-              className={
-                column.key === "name"
-                  ? ""
-                  : column.key === "gender"
-                  ? "hidden wwl:table-cell"
-                  : column.key === "parentName"
-                  ? "hidden wl:table-cell"
-                  : "hidden md:table-cell"
-              }
-              allowsSorting
-            >
-              {column.name}
-              {/* will be firstName + LastName */}
+      {isLoading ? (
+        <StudentsTableSkeleton />
+      ) : (
+        <Table
+          color={"primary"}
+          selectionMode="multiple"
+          aria-label="Students table"
+          sortDescriptor={sortDescriptor}
+          onSortChange={(sort) => handleSortChange(sort.column)}
+          classNames={classNames}
+          onSelectionChange={(selected) => {
+            setSelected(selected);
+          }}
+        >
+          <TableHeader>
+            {columns.map((column) => (
+              <TableColumn
+                key={column.key}
+                className={
+                  column.key === "name"
+                    ? ""
+                    : column.key === "gender"
+                    ? "hidden wwl:table-cell"
+                    : column.key === "parentName"
+                    ? "hidden wl:table-cell"
+                    : "hidden md:table-cell"
+                }
+                allowsSorting
+                onClick={() => handleSortChange(column.key)}
+              >
+                {column.name}
+              </TableColumn>
+            ))}
+            <TableColumn className="p-0">
+              {selected.size || selected == "all" ? (
+                <MultiDelete data={selected} />
+              ) : (
+                "Actions"
+              )}
             </TableColumn>
-          ))}
-          {/* pass other than selected , this is temporary */}
-          <TableColumn className="p-0">
-            {selected.size || selected == "all" ? (
-              <MultiDelete data={selected} />
-            ) : (
-              "Actions"
-            )}
-          </TableColumn>
-        </TableHeader>
-        <TableBody emptyContent={"No Students to display."}>
-          {list.items.map((student, index) => (
-            //key to be replaced with the student id
-            <TableRow key={index}>
-              <TableCell>
-                <div className="flex items-center justify-start gap-2">
-                  <Avatar fallback src={student.pfp} className=" md:hidden" />
-                  {getKeyValue(student, "firstName") +
-                    " " +
-                    getKeyValue(student, "lastName")}
-                </div>
-              </TableCell>
-              <TableCell className="hidden md:table-cell">
-                <div className="flex gap-2 items-center justify-center">
-                  <PhoneIcon />
-                  {getKeyValue(student, "phone")}
-                </div>
-              </TableCell>
-              <TableCell className="hidden md:table-cell">
-                {getKeyValue(student, "email")}
-              </TableCell>
-              <TableCell className="hidden md:table-cell">
-                <GradeBox tClassName={getKeyValue(student, "grade")} />
-              </TableCell>
-              <TableCell className="hidden wl:table-cell">
-                {getKeyValue(student, "parentName")}
-              </TableCell>
-              <TableCell className="hidden md:table-cell p-4 pr-6">
-                <ClassBox tClassName={getKeyValue(student, "class")} />
-              </TableCell>
-              <TableCell className="hidden wwl:table-cell">
-                {getKeyValue(student, "gender")}
-              </TableCell>
-              <TableCell>
-                <Action data={student} />
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody emptyContent={"No Students to display."}>
+            {items.map((student, index) => (
+              <TableRow key={student.id}>
+                <TableCell>
+                  <div className="flex items-center justify-start gap-2">
+                    <Avatar fallback src={student.pfp} className=" md:hidden" />
+                    {getKeyValue(student, "firstName") +
+                      " " +
+                      getKeyValue(student, "lastName")}
+                  </div>
+                </TableCell>
+                <TableCell className="hidden md:table-cell">
+                  <div className="flex gap-2 items-center justify-center">
+                    <PhoneIcon />
+                    {getKeyValue(student, "phone")}
+                  </div>
+                </TableCell>
+                <TableCell className="hidden md:table-cell">
+                  {getKeyValue(student, "email")}
+                </TableCell>
+                <TableCell className="hidden md:table-cell">
+                  <GradeBox tClassName={getKeyValue(student, "grade")} />
+                </TableCell>
+                <TableCell className="hidden wl:table-cell">
+                  {getKeyValue(student, "parentName")}
+                </TableCell>
+                <TableCell className="hidden md:table-cell p-4 pr-6">
+                  <ClassBox tClassName={getKeyValue(student, "className")} />
+                </TableCell>
+                <TableCell className="hidden wwl:table-cell">
+                  {getKeyValue(student, "gender")}
+                </TableCell>
+                <TableCell>
+                  <Action data={student} />
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      )}
     </div>
   );
 }
@@ -276,6 +185,11 @@ const columns = [
   { key: "gender", name: "Gender" },
 ];
 
+const classNames = {
+  tr: ["text-center"],
+  th: ["bg-transparent", "border-b-1", "border-gray-300", "text-center"],
+};
+
 function GradeBox({ tClassName = "" }) {
   const color =
     tClassName.toLowerCase() === "prm"
@@ -289,7 +203,7 @@ function GradeBox({ tClassName = "" }) {
   return (
     <div
       className={
-        "text-white text-center rounded-full shadow-md cursor-pointer py-2 px-3"
+        "text-white text-center text-[14px] text-bold  rounded-full shadow-md cursor-pointer py-2 px-3 max-w-[140px]"
       }
       style={boxStyles}
     >
@@ -311,7 +225,7 @@ function ClassBox({ tClassName = "", style }) {
   return (
     <div
       className={
-        "text-white text-center rounded-full shadow-md cursor-pointer py-2 px-[14px]"
+        "text-white text-center text-[13px] text-bold rounded-full shadow-md cursor-pointer py-2 px-[14px] max-w-[100px]"
       }
       style={boxStyles}
     >
@@ -319,3 +233,44 @@ function ClassBox({ tClassName = "", style }) {
     </div>
   );
 }
+
+const StudentsTableSkeleton = () => {
+  return (
+    <div className="flex flex-col gap-3 animate-pulse">
+      <div className="w-full bg-gray-200 rounded-lg overflow-hidden">
+        <div className="w-full flex justify-between p-4 bg-gray-400">
+          {[
+            "Name",
+            "Phone",
+            "Email",
+            "Grade",
+            "Parent Name",
+            "Class",
+            "Gender",
+            "Actions",
+          ].map((header) => (
+            <div key={header} className="w-1/8 h-4 bg-gray-500 rounded"></div>
+          ))}
+        </div>
+        {[...Array(10)].map((_, index) => (
+          <div
+            key={index}
+            className="w-full flex justify-between items-center p-4 border-t border-gray-300"
+          >
+            <div className="flex items-center gap-2">
+              <div className="w-10 h-10 bg-gray-400 rounded-full"></div>
+              <div className="sm:w-24 w-36 h-4 bg-gray-400 rounded-full"></div>
+            </div>
+            <div className="w-24 h-4 bg-gray-400 rounded-full hidden sm:block"></div>
+            <div className="w-36 h-4 bg-gray-400 rounded-full hidden md:block"></div>
+            <div className="w-16 h-4 bg-gray-400 rounded-full hidden sm:block"></div>
+            <div className="w-28 h-4 bg-gray-400 rounded-full hidden sm:block"></div>
+            <div className="w-16 h-4 bg-gray-400 rounded-full hidden sm:block"></div>
+            <div className="w-12 h-4 bg-gray-400 rounded-full hidden md:block"></div>
+            <div className="w-16 h-4 bg-gray-400 rounded-full"></div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};

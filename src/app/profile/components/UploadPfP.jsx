@@ -45,6 +45,7 @@ export default function UploadPfP({ pfp }) {
     try {
       const data = new FormData();
       data.set("picture", file);
+      data.set("id", session.user.id);
       const res = await fetch("api/profile/uploadpfp", {
         method: "POST",
         body: data,

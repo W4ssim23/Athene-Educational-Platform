@@ -11,17 +11,19 @@ import {
   SelectItem,
 } from "@nextui-org/react";
 import { useForm } from "react-hook-form";
-import { useRef, useState } from "react";
-import { filterEmptyValues } from "@/lib";
+import { useRef, useState, useContext } from "react";
+import FetchingContext from "@/app/context";
+
+//toast message
 
 export default function AddForm() {
   const grades = ["lycee", "cem", "prm"];
-  //will fetch classes based on the selected grade this is temporary
+  // Will fetch classes based on the selected grade this is temporary
   const classes = ["1S1", "2m2", "1p1"];
   const [selectedGrade, setSelectedGrade] = useState("");
   const [selectedClass, setSelectedClass] = useState("");
-  //   const [classes, setClasses] = useState([]);
-  //   const [loading, setLoading] = useState(false);
+
+  const { students, setStudents } = useContext(FetchingContext);
 
   const {
     register,
@@ -32,32 +34,32 @@ export default function AddForm() {
   const onCloseRef = useRef(null);
 
   const onSubmit = async (data) => {
-    console.log("submition !");
+    console.log("Submission !");
     console.log(data);
-    // if (Object.keys(filterEmptyValues(data)).length === 0) {
-    //   onCloseRef.current();
-    //   return;
-    // }
 
-    // try {
-    //   const response = await fetch("/api/profile/edit", {
-    //     method: "POST",
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //     body: JSON.stringify({ ...filterEmptyValues(data), id: user.id }),
-    //   });
+    try {
+      const response = await fetch("/api/students/addone", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
 
-    //   const res = await response.json();
-    //   // console.log(res);
+      console.log("request sent");
 
-    //   if (response.ok) {
-    //     await handleSessionUpdate(filterEmptyValues(data));
-    //     onCloseRef.current();
-    //   }
-    // } catch (error) {
-    //   console.error("EditForm error:", error);
-    // }
+      if (response.ok) {
+        const result = await response.json();
+        // console.log("Student registered successfully:", result);
+        setStudents([...students, result.student]);
+        onCloseRef.current();
+      } else {
+        const errorData = await response.json();
+        console.error("Registration failed:", errorData);
+      }
+    } catch (error) {
+      console.error("An error occurred during registration:", error);
+    }
   };
 
   return (
@@ -72,9 +74,11 @@ export default function AddForm() {
             <ModalBody>
               <form
                 className="flex flex-col gap-3 items-center"
-                onSubmit={handleSubmit(onSubmit)}
+                onSubmit={handleSubmit(async (data) => {
+                  await onSubmit(data);
+                })}
               >
-                <div className=" w-full sm:flex sm:gap-4">
+                <div className="w-full sm:flex sm:gap-4">
                   <Input
                     label="First Name"
                     variant="bordered"
@@ -101,9 +105,9 @@ export default function AddForm() {
                     errorMessage={errors?.lastName?.message ?? ""}
                   />
                 </div>
-                <div className=" w-full sm:flex sm:gap-4">
+                <div className="w-full sm:flex sm:gap-4">
                   <Input
-                    label="Prent Name"
+                    label="Parent Name"
                     variant="bordered"
                     {...register("parentName", {
                       validate: (value) => {
@@ -128,7 +132,7 @@ export default function AddForm() {
                     errorMessage={errors?.address?.message ?? ""}
                   />
                 </div>
-                <div className=" w-full sm:flex sm:gap-4">
+                <div className="w-full sm:flex sm:gap-4">
                   <Input
                     label="Phone"
                     type="tel"
@@ -182,14 +186,14 @@ export default function AddForm() {
                   label="Class"
                   placeholder="Select a Class"
                   variant="bordered"
-                  {...register("class", {
+                  {...register("classs", {
                     validate: (value) => {
                       if (value.length === 0) return "Class is required";
                       return true;
                     },
                   })}
-                  isInvalid={!!errors.class}
-                  errorMessage={errors?.class?.message ?? ""}
+                  isInvalid={!!errors.classs}
+                  errorMessage={errors?.classs?.message ?? ""}
                 >
                   {classes.map((aclass) => (
                     <SelectItem key={aclass} value={aclass}>

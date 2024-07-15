@@ -14,6 +14,8 @@ import { useForm } from "react-hook-form";
 import { useRef, useState } from "react";
 import { filterEmptyValues } from "@/lib";
 
+//toast message
+
 export default function AddForm({ student }) {
   const grades = ["lycee", "cem", "prm"];
   //will fetch classes based on the selected grade this is temporary
@@ -32,34 +34,45 @@ export default function AddForm({ student }) {
   const onCloseRef = useRef(null);
 
   const onSubmit = async (data) => {
-    console.log("submition !");
-    // console.log(data);
-    // this time this one is diffrent , it should ignore grade class and gender if they are similar to the old data
-    // i can just exclude the ampty fields , and compare the rest with the old data , that's why i changed the prop name to student
-    // if (Object.keys(filterEmptyValues(data)).length === 0) {
-    //   onCloseRef.current();
-    //   return;
-    // }
+    // Filter out empty values
+    if (data.grade === student.grade) {
+      data.grade = undefined;
+    }
+    if (data.class === student.class) {
+      data.class = undefined;
+    }
+    if (data.gender.toLowerCase() === student.gender.toLowerCase()) {
+      data.gender = undefined;
+    }
 
-    // try {
-    //   const response = await fetch("/api/profile/edit", {
-    //     method: "POST",
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //     body: JSON.stringify({ ...filterEmptyValues(data), id: user.id }),
-    //   });
+    const filteredData = filterEmptyValues(data);
 
-    //   const res = await response.json();
-    //   // console.log(res);
+    if (Object.keys(filterEmptyValues(data)).length === 0) {
+      onCloseRef.current();
+      return;
+    }
+    filteredData.id = student.id;
+    console.log("Filtered data:", filteredData);
 
-    //   if (response.ok) {
-    //     await handleSessionUpdate(filterEmptyValues(data));
-    //     onCloseRef.current();
-    //   }
-    // } catch (error) {
-    //   console.error("EditForm error:", error);
-    // }
+    try {
+      const response = await fetch("/api/students/edit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(filteredData),
+      });
+
+      const result = await response.json();
+      if (response.ok) {
+        console.log("Student updated successfully:", result);
+        onCloseRef.current();
+      } else {
+        console.error("Error updating student:", result.message);
+      }
+    } catch (error) {
+      console.error("Request error:", error);
+    }
   };
 
   return (
@@ -195,7 +208,7 @@ export default function AddForm({ student }) {
                 <Select
                   label="Class"
                   placeholder="Select a Class"
-                  defaultSelectedKeys={[student.class ?? ""]}
+                  defaultSelectedKeys={[student.className ?? ""]}
                   variant="bordered"
                   {...register("class", {
                     validate: (value) => {
@@ -215,7 +228,7 @@ export default function AddForm({ student }) {
                 <Select
                   label="Gender"
                   placeholder="Select a Gender"
-                  defaultSelectedKeys={["Female"]}
+                  defaultSelectedKeys={[student.gender.toLowerCase()]}
                   variant="bordered"
                   {...register("gender", {
                     validate: (value) => {
@@ -226,10 +239,10 @@ export default function AddForm({ student }) {
                   isInvalid={!!errors.gender}
                   errorMessage={errors?.gender?.message ?? ""}
                 >
-                  <SelectItem value="Male" key={"Male"}>
+                  <SelectItem value="male" key={"male"}>
                     Male
                   </SelectItem>
-                  <SelectItem value="Female" key={"Female"}>
+                  <SelectItem value="female" key={"female"}>
                     Female
                   </SelectItem>
                 </Select>

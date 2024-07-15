@@ -66,14 +66,13 @@ export const authOptions = {
         token.role = user.role;
         token.firstName = user.firstName;
         token.lastName = user.lastName;
-        token.pfp =
-          "https://pagesix.com/wp-content/uploads/sites/3/2019/04/gettyimages-1076483808.jpg?quality=75&strip=all";
+        token.pfp = user.pfp;
         token.email = user.email;
         token.address = user.address;
         token.phone = user.phone;
         token.isAdmin = user.isAdmin;
         token.classes = ["1s1", "1m1", "1p1"];
-        token.about = "A Goated Developer 'Full stack Developer hhhhh' ";
+        token.about = user.about;
         //inserting other ifs later
       }
       return token;

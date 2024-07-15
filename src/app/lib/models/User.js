@@ -1,17 +1,19 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose from "mongoose";
+
+const { Schema } = mongoose;
 
 const userSchema = new Schema(
   {
     firstName: {
       type: String,
       required: true,
-      minlength: 3,
+      minlength: 2,
       maxlength: 20,
     },
     lastName: {
       type: String,
       required: true,
-      minlength: 3,
+      minlength: 2,
       maxlength: 20,
     },
     pfp: {
@@ -28,6 +30,9 @@ const userSchema = new Schema(
       type: String,
       required: true,
     },
+    bahbah: {
+      type: String,
+    },
     role: {
       type: String,
       enum: ["admin", "student", "parent", "teacher", "adviser"],
@@ -37,11 +42,19 @@ const userSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    gender: {
+      type: String,
+      enum: ["male", "female"],
+    },
     email: {
       type: String,
+      // match: /^\S+@\S+\.\S+$/,
+      // Optional email validation pattern
     },
     phone: {
       type: String,
+      // match: /^\d{10,15}$/,
+      // Optional phone number validation pattern
     },
     address: {
       type: String,
@@ -49,30 +62,52 @@ const userSchema = new Schema(
     about: {
       type: String,
     },
-    // Relations
-    parentOf: {
-      type: Schema.Types.ObjectId,
-      ref: "User", // Reference to other User (for parents)
+
+    // Used if it's a student
+    className: {
+      type: String,
     },
-    class: {
+    classId: {
       type: Schema.Types.ObjectId,
-      ref: "Class", // Reference to Class (for students)
+      ref: "Class",
     },
-    modulesTeaching: [
+    grade: {
+      type: String,
+      enum: ["cem", "lycee", "prm"],
+    },
+    parentName: {
+      type: String,
+    },
+    //student absence and latency:
+    abcense: [
       {
-        type: Schema.Types.ObjectId,
-        ref: "Module", // Reference to Module (for teachers)
+        type: Date,
       },
     ],
+
+    // Used if it's a teacher
+    classes: [
+      {
+        type: String,
+      },
+    ],
+    modules: [
+      {
+        type: String,
+      },
+    ],
+    // All except admin
     notifications: [
       {
-        type: Schema.Types.ObjectId,
-        ref: "Notification", // Reference to Notification
+        type: String,
       },
     ],
   },
   { timestamps: true }
 );
+
+// Adding an index to optimize queries on timestamps
+userSchema.index({ createdAt: 1, updatedAt: 1 });
 
 const User = mongoose.models.User || mongoose.model("User", userSchema);
 

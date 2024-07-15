@@ -19,7 +19,45 @@ const Classes = {
         grade: "lycee",
         year: 1,
         number: 1,
-        content: { courses: [], wajib: [], optional: [] },
+        modules: [
+          {
+            id: 1,
+            name: "math",
+            teacherName: "Zouitene Ouassim",
+            teacherPfp: "a link",
+            teacherId: 1,
+            courses: [
+              {
+                id: 1,
+                name: "Serie De Fourie",
+                type: "Cours",
+                date: "2024-07-12",
+                link: "a link",
+                file: "xlsx",
+                comments: [
+                  {
+                    student: { name: "Zouitene Ouassim", pfp: "a link", id: 7 },
+                    comment: "This lecture was really helpful!",
+                  },
+                  {
+                    student: { name: "Chelouah Leila", pfp: "a link", id: 2 },
+                    comment: "Le module est facile on principe",
+                  },
+                ],
+              },
+              {},
+              {},
+            ],
+          },
+          {},
+          {},
+          {},
+        ],
+        students: [
+          { name: "wassim", pfp: "a link", id: 1 },
+          { name: "wassim", pfp: "a link", id: 2 },
+          { name: "wassim", pfp: "a link", id: 3 },
+        ],
       },
       {
         id: 2,

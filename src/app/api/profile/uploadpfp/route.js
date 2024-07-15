@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
-
-//file will be moved to [id]
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import User from "@/app/lib/models/User";
+import { connectMongoDB } from "@/app/lib/mongodb";
 
 export async function POST(request) {
   const data = await request.formData();
@@ -19,6 +21,31 @@ export async function POST(request) {
   const pfpUrl = await handleImageUpload(picture);
 
   //logic to save the image to the database :
+  // extra layer of security to add later
+  const session = await getServerSession(authOptions);
+  const { user } = session;
+  const userId = user.id;
+  const confId = data.get("id");
+
+  if (confId !== userId) {
+    console.log("Unauthorized user tried to upload pfp");
+    return NextResponse.json({ status: 401 });
+  }
+
+  await connectMongoDB();
+
+  const updatedUser = await User.findByIdAndUpdate(
+    userId,
+    { $set: { pfp: pfpUrl } },
+    { new: true, runValidators: true }
+  );
+
+  if (!updatedUser) {
+    return NextResponse.json({
+      success: false,
+      error: "User not found",
+    });
+  }
 
   return NextResponse.json({
     success: true,

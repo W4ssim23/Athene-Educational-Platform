@@ -19,7 +19,11 @@ export default function View({ data }) {
             <ModalBody className="flex flex-col items-center">
               <div className="flex flex-col justify-center md:items-center items-start bg-white  rounded-lg gap-5">
                 <div className="flex md:flex-col gap-6 md:gap-2 items-center justify-center ">
-                  <Avatar src={data.pfp} className="w-20 h-20 text-large" />
+                  <Avatar
+                    fallback
+                    src={data.pfp}
+                    className="w-20 h-20 text-large"
+                  />
                   <p className="text-large font-[600] text-blueTitle">
                     {data.lastName} {data.firstName}
                   </p>
@@ -32,6 +36,14 @@ export default function View({ data }) {
                     </p>
                     <p className="text-[16px] text-primary font-[600] text-wrap">
                       {data.email}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <p className="font-poppins text-[16px] text-blueTitle font-[600] text-nowrap">
+                      Address :{" "}
+                    </p>
+                    <p className="text-[16px] text-primary font-[600] text-wrap">
+                      {data.address}
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
@@ -60,7 +72,7 @@ export default function View({ data }) {
                     <p className="font-poppins text-[16px] text-blueTitle font-[600]">
                       Class :{" "}
                     </p>
-                    <ClassBox tClassName={data.class} />
+                    <ClassBox tClassName={data.className} />
                   </div>
                 </div>
               </div>

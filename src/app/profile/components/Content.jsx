@@ -122,7 +122,7 @@ const Content = () => {
           </div>
         )}
 
-        {(user.role === "teacher" || user.role === "admin") && (
+        {user.classes && (
           <div className="m-2 ml-3">
             <div className="flex m-1 my-2 items-center">
               <SmallButton

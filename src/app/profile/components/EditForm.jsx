@@ -34,8 +34,30 @@ export default function EditForm({ user }) {
     });
   };
 
+  // async function createAdminUser() {
+  //   try {
+  //     console.log("Creating admin user...");
+  //     const response = await fetch("/api/adduser", {
+  //       method: "GET",
+  //     });
+
+  //     // console.log("got the responce");
+  //     // console.log(response);
+  //     if (response.status === 200) {
+  //       console.log("its ok");
+  //       // const data = await response.json();
+  //       console.log("Admin user created");
+  //     } else {
+  //       console.error("Failed to create admin user:", response.statusText);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error occurred while creating admin user:", error);
+  //   }
+  // }
+
   const onSubmit = async (data) => {
     if (Object.keys(filterEmptyValues(data)).length === 0) {
+      // await createAdminUser();
       onCloseRef.current();
       return;
     }
