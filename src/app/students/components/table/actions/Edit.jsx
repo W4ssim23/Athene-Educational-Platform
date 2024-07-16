@@ -11,8 +11,9 @@ import {
   SelectItem,
 } from "@nextui-org/react";
 import { useForm } from "react-hook-form";
-import { useRef, useState } from "react";
+import { useRef, useState, useContext } from "react";
 import { filterEmptyValues } from "@/lib";
+import FetchingContext from "@/app/context";
 
 //toast message
 
@@ -24,6 +25,8 @@ export default function AddForm({ student }) {
   const [selectedClass, setSelectedClass] = useState("");
   //   const [classes, setClasses] = useState([]);
   //   const [loading, setLoading] = useState(false);
+
+  const { students, setStudents } = useContext(FetchingContext);
 
   const {
     register,
@@ -65,7 +68,14 @@ export default function AddForm({ student }) {
 
       const result = await response.json();
       if (response.ok) {
-        console.log("Student updated successfully:", result);
+        // console.log("Student updated successfully:", result);
+        // console.log("filtered data:", filteredData);
+        // console.log("data:", student);
+        // Update the student in the students list
+        const updatedStudents = students.map((s) =>
+          s.id === student.id ? { ...s, ...filteredData } : s
+        );
+        setStudents(updatedStudents);
         onCloseRef.current();
       } else {
         console.error("Error updating student:", result.message);
@@ -210,14 +220,14 @@ export default function AddForm({ student }) {
                   placeholder="Select a Class"
                   defaultSelectedKeys={[student.className ?? ""]}
                   variant="bordered"
-                  {...register("class", {
+                  {...register("className", {
                     validate: (value) => {
                       if (value.length === 0) return "Class is required";
                       return true;
                     },
                   })}
-                  isInvalid={!!errors.class}
-                  errorMessage={errors?.class?.message ?? ""}
+                  isInvalid={!!errors.className}
+                  errorMessage={errors?.className?.message ?? ""}
                 >
                   {classes.map((aclass) => (
                     <SelectItem key={aclass} value={aclass}>

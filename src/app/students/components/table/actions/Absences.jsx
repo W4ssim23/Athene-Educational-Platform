@@ -6,8 +6,9 @@ import {
   ModalFooter,
   Button,
 } from "@nextui-org/react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { Absence } from "@/assets";
+import FetchingContext from "@/app/context";
 import Trash from "./Trash";
 import Image from "next/image";
 
@@ -15,6 +16,8 @@ export default function Absences({ data }) {
   const [absences, setAbsences] = useState([]);
   const [date, setDate] = useState({});
   const [loading, setLoading] = useState(false);
+
+  const { students, setStudents } = useContext(FetchingContext);
 
   useEffect(() => {
     if (data.abcense) {
@@ -54,6 +57,18 @@ export default function Absences({ data }) {
           selectedDate.getMonth() + 1
         }/${selectedDate.getFullYear()}`;
         setAbsences([...absences, formattedDate]);
+
+        // Update the student in the students list
+        const updatedStudents = students.map((student) => {
+          if (student.id === data.id) {
+            return {
+              ...student,
+              abcense: [...student.abcense, selectedDate.toISOString()],
+            };
+          }
+          return student;
+        });
+        setStudents(updatedStudents);
       } else {
         console.error(result.message);
       }
@@ -88,6 +103,19 @@ export default function Absences({ data }) {
 
       if (response.ok) {
         setAbsences(absences.filter((item) => item !== absence));
+        // Update the student in the students list
+        const updatedStudents = students.map((student) => {
+          if (student.id === data.id) {
+            return {
+              ...student,
+              abcense: student.abcense.filter(
+                (date) => date !== formattedDate.toISOString()
+              ),
+            };
+          }
+          return student;
+        });
+        setStudents(updatedStudents);
       } else {
         console.error(result.message);
       }

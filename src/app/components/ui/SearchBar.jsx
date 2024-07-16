@@ -23,7 +23,7 @@ const SearchBar = () => {
       setStudents(data.students);
     }
     //else a toast message will be shown
-  }, 500);
+  }, 400);
 
   return (
     <Input
