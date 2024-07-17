@@ -5,25 +5,45 @@ import { Input } from "@nextui-org/react";
 import { useDebouncedCallback } from "use-debounce";
 import { useContext } from "react";
 import FetchingContext from "@/app/context";
+import { usePathname } from "next/navigation";
 
 const SearchBar = () => {
-  const { setStudents } = useContext(FetchingContext);
+  const { setStudents, setTeachers } = useContext(FetchingContext);
+  const pathname = usePathname();
 
-  const handleSearch = useDebouncedCallback(async (e) => {
-    // console.log("searching for:", e.target.value);
-    const response = await fetch(`/api/students?search=${e.target.value}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    if (response.ok) {
-      const data = await response.json();
-      // console.log("data:", data.students);
-      setStudents(data.students);
-    }
-    //else a toast message will be shown
-  }, 400);
+  const handleSearch = useDebouncedCallback(
+    async (e) => {
+      // console.log("searching for:", e.target.value);
+      if (pathname === "/studnets") {
+        const response = await fetch(`/api/students?search=${e.target.value}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        if (response.ok) {
+          const data = await response.json();
+          // console.log("data:", data.students);
+          setStudents(data.students);
+        }
+        //else a toast message will be shown
+      } else {
+        const response = await fetch(`/api/teachers?search=${e.target.value}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        if (response.ok) {
+          const data = await response.json();
+          // console.log("data:", data.teachers);
+          setTeachers(data.teachers);
+        }
+      }
+    },
+
+    400
+  );
 
   return (
     <Input

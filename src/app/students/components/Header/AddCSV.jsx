@@ -16,6 +16,7 @@ import * as XLSX from "xlsx";
 
 // remaianing job : check the lenght of the fields , if the spelling is correct , if the class exists
 // remove the allert and replace it with a toast message
+//should get a better way handling conflicts , it have to send the students that already created and signal the one that made the problem
 
 export default function AddCsv() {
   const [file, setFile] = useState(null);

@@ -1,41 +1,68 @@
 "use client";
 
+import { useState, useEffect, useContext } from "react";
 import { ClassW, Phone, Edit, Location, Email } from "@/app/profile/icons";
 import DeleteIcon from "./DeleteIcon";
-import { useState, useEffect } from "react";
 import EditForm from "./EditForm";
 import Delete from "./Delete";
 import ProfilePicture from "./ProfilePicture";
 import SmallButton from "@/app/components/ui/SmallButton";
 import ClassBox from "@/app/components/ui/ClassBox";
 import Skeleton from "./Skeleton";
+import FetchingContext from "@/app/context";
 
-const Content = () => {
-  //
+const Content = ({ id }) => {
   const buttonSizes = "40px";
+  const [isLoading, setIsLoading] = useState(false);
+  const [teacher, setTeacher] = useState(null);
 
-  //fetching the user and desplaying a skeleton instead
+  const { teachers } = useContext(FetchingContext);
 
-  const teacher = {
-    id: 1,
-    firstName: "John",
-    lastName: "Doe",
-    speciality: "Maths",
-    pfp: "https://www.japanfm.fr/wp-content/uploads/2021/10/Super-Saiyan-3-Goku-1.jpg",
-    phone: "1234567890",
-    email: "dgg@gg.tt",
-    address: "1234 rue de la rue",
-    about: "I am a teacher",
-    classes: ["2m3", "1s7", "2s2", "2p3"],
-  };
+  useEffect(() => {
+    const fetchTeacher = async () => {
+      setIsLoading(true);
+      try {
+        const response = await fetch(`/api/teachers/${id}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          console.log("Failed to fetch teacher");
+          return;
+        }
+
+        const data = await response.json();
+        // console.log("data", data.teacher);
+        setTeacher(data.teacher);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (!teachers) {
+      fetchTeacher();
+    } else {
+      const foundTeacher = teachers.find((teacher) => teacher.id === id);
+      setTeacher(foundTeacher);
+    }
+  }, [id, teachers]);
+
+  if (isLoading || !teacher) {
+    return <Skeleton />;
+  }
 
   return (
-    <div className="relative flex flex-col rounded-xl p-2 bg-white sm:p-[25px]  overflow-hidden">
-      <div className="absolute top-0 left-0 h-[140px] w-full  bg-primary "></div>
+    <div className="relative flex flex-col rounded-xl p-2 bg-white sm:p-[25px] overflow-hidden">
+      <div className="absolute top-0 left-0 h-[140px] w-full bg-primary"></div>
 
       <ProfilePicture pfp={teacher.pfp} />
 
-      <div className="flex justify-start gap-[30px] ml-[25px] sm:w-2/5  mb-4  ">
+      <div className="flex justify-start gap-[30px] ml-[25px] sm:w-2/5 mb-4">
         <div className="flex flex-col justify-center">
           <h3 className="text-[#303972] font-bold text-xl capitalize">
             {teacher.firstName + " " + teacher.lastName}
@@ -51,7 +78,7 @@ const Content = () => {
             bg={"#FB7D5B"}
             size={"40px"}
             popUpOnClick={true}
-            popUpComponent={<EditForm user={teacher} />}
+            popUpComponent={<EditForm user={teacher} setTeacher={setTeacher} />}
           />
           <SmallButton
             picture={<DeleteIcon />}
@@ -94,7 +121,7 @@ const Content = () => {
           </div>
         </div>
         <div className="m-1 ml-4 flex flex-col gap-3">
-          <h3 className=" text-[#303972] font-bold text-lg ">About :</h3>
+          <h3 className="text-[#303972] font-bold text-lg">About :</h3>
           <p className="font-poppins text-[#303972] text-base min-h-[80px] max-w-[615px]">
             {teacher.about ?? "No description"}
           </p>
@@ -110,16 +137,14 @@ const Content = () => {
               {"Classes :"}
             </p>
           </div>
-          <div className="flex flex-wrap gap-6 ml-4  sm:w-[600px]">
-            {teacher?.classes?.map((name, indx) => {
-              return (
-                <ClassBox
-                  key={indx}
-                  tClassName={name}
-                  style="w-[85px] sm:h-[47px] h-[52px]  text-white text-center rounded-[14px] shadow-md text-[20px] font-[500] uppercase py-3 cursor-pointer"
-                />
-              );
-            })}
+          <div className="flex flex-wrap gap-6 ml-4 sm:w-[600px]">
+            {teacher?.classes?.map((name, indx) => (
+              <ClassBox
+                key={indx}
+                tClassName={name}
+                style="w-[85px] sm:h-[47px] h-[52px] text-white text-center rounded-[14px] shadow-md text-[20px] font-[500] uppercase py-3 cursor-pointer"
+              />
+            ))}
           </div>
         </div>
       </div>

@@ -9,17 +9,8 @@ import CryptoJS from "crypto-js";
 export async function POST(req) {
   const encryptionKey = process.env.INCRYPT_SECRET;
   try {
-    const {
-      firstName,
-      lastName,
-      parentName,
-      address,
-      phone,
-      email,
-      grade,
-      classs,
-      gender,
-    } = await req.json();
+    const { firstName, lastName, address, phone, email, speciality } =
+      await req.json();
 
     const session = await getServerSession(authOptions);
     const { user } = session;
@@ -34,13 +25,10 @@ export async function POST(req) {
     if (
       !firstName ||
       !lastName ||
-      !parentName ||
       !address ||
       !phone ||
       !email ||
-      !grade ||
-      !classs ||
-      !gender
+      !speciality
     ) {
       return NextResponse.json(
         { message: "All fields are required." },
@@ -78,46 +66,41 @@ export async function POST(req) {
       username,
       firstName,
       lastName,
-      parentName,
       email,
       address,
       phone,
-      grade,
-      //   classId,
-      gender: gender === "$.1" ? "female" : "male", //will fix it from the frontend later
-      className: classs,
+      speciality,
       password: hashedPassword,
       bahbah: encryptedPassword,
-      role: "student",
+      role: "teacher",
       isAdmin: false,
       pfp: "",
-      notifications: [],
+      classes: [],
     });
 
     console.log("User created:", newUser);
 
-    const newStudent = {
+    const newTeacher = {
       id: newUser._id,
       firstName: newUser.firstName,
       lastName: newUser.lastName,
       email: newUser.email,
       phone: newUser.phone,
-      grade: newUser.grade,
-      className: newUser.className,
-      parentName: newUser.parentName,
       address: newUser.address,
+      speciality: newUser.speciality,
       pfp: newUser.pfp,
-      gender: newUser.gender,
+      classes: newUser.classes,
+      about: newUser.about,
     };
 
     return NextResponse.json(
-      { message: "Student registered successfully.", student: newStudent },
+      { message: "Teacher registered successfully.", teacher: newTeacher },
       { status: 201 }
     );
   } catch (error) {
     console.error("Registration error:", error);
     return NextResponse.json(
-      { message: "An error occurred while registering the Student." },
+      { message: "An error occurred while registering the Teacher." },
       { status: 500 }
     );
   }

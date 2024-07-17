@@ -11,10 +11,13 @@ import {
   SelectItem,
 } from "@nextui-org/react";
 import { useForm } from "react-hook-form";
-import { useRef, useState } from "react";
+import { useRef, useContext } from "react";
+import FetchingContext from "@/app/context";
 
 export default function AddForm() {
-  const specialities = ["Maths", "Physics", "Chemistry", "Biology", "English"]; //add to it
+  const specialities = ["Primaire", "Cem", "Lycee"];
+
+  const { teachers, setTeachers } = useContext(FetchingContext);
 
   const {
     register,
@@ -25,32 +28,31 @@ export default function AddForm() {
   const onCloseRef = useRef(null);
 
   const onSubmit = async (data) => {
-    console.log("submition !");
-    console.log(data);
-    // if (Object.keys(filterEmptyValues(data)).length === 0) {
-    //   onCloseRef.current();
-    //   return;
-    // }
+    // console.log("submition !");
+    // console.log(data);
+    try {
+      const response = await fetch("/api/teachers/addone", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
 
-    // try {
-    //   const response = await fetch("/api/profile/edit", {
-    //     method: "POST",
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //     body: JSON.stringify({ ...filterEmptyValues(data), id: user.id }),
-    //   });
+      // console.log("request sent");
 
-    //   const res = await response.json();
-    //   // console.log(res);
-
-    //   if (response.ok) {
-    //     await handleSessionUpdate(filterEmptyValues(data));
-    //     onCloseRef.current();
-    //   }
-    // } catch (error) {
-    //   console.error("EditForm error:", error);
-    // }
+      if (response.ok) {
+        const result = await response.json();
+        // console.log("Teacher registered successfully:", result);
+        setTeachers([...teachers, result.teacher]);
+        onCloseRef.current();
+      } else {
+        const errorData = await response.json();
+        console.error("Registration failed:", errorData);
+      }
+    } catch (error) {
+      console.error("An error occurred during registration:", error);
+    }
   };
 
   return (

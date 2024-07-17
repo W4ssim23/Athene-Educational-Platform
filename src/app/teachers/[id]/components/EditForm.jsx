@@ -11,10 +11,11 @@ import {
   SelectItem,
 } from "@nextui-org/react";
 import { useForm } from "react-hook-form";
-import { useRef } from "react";
+import { useRef, useContext } from "react";
 import { filterEmptyValues } from "@/lib";
+import FetchingContext from "@/app/context";
 
-export default function EditForm({ user }) {
+export default function EditForm({ user, setTeacher }) {
   const {
     register,
     handleSubmit,
@@ -23,36 +24,50 @@ export default function EditForm({ user }) {
   const submitButtonRef = useRef(null);
   const onCloseRef = useRef(null);
 
-  const specialities = ["Maths", "Physics", "Chemistry", "Biology", "English"]; //add to it
+  const specialities = ["Primaire", "Cem", "Lycee"];
+
+  const { teachers, setTeachers } = useContext(FetchingContext);
 
   const onSubmit = async (data) => {
-    if (
-      Object.keys(filterEmptyValues(data)).length === 0 ||
-      (data.speciality === user.speciality &&
-        Object.keys(filterEmptyValues(data)).length === 1)
-    ) {
+    // Filter out empty values
+
+    if (data?.speciality?.toLowerCase() === user?.speciality?.toLowerCase()) {
+      data.gender = undefined;
+    }
+
+    const filteredData = filterEmptyValues(data);
+
+    if (Object.keys(filterEmptyValues(data)).length === 0) {
       onCloseRef.current();
       return;
     }
-
-    //DATA SHOULD BE CLEARED FROM THE REPEATED SPECIALITY
+    filteredData.id = user.id;
+    // console.log("Filtered data:", filteredData);
 
     try {
-      //   const response = await fetch("/api/profile/edit", {
-      //     method: "POST",
-      //     headers: {
-      //       "Content-Type": "application/json",
-      //     },
-      //     body: JSON.stringify({ ...filterEmptyValues(data), id: user.id }),
-      //   });
-      //   //   const res = await response.json();
-      //   //   console.log(res);
-      //   if (response.ok) {
-      //     await handleSessionUpdate(filterEmptyValues(data));
-      //     onCloseRef.current();
-      //   }
+      const response = await fetch(`/api/teachers/${user.id}/edit`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(filteredData),
+      });
+
+      const result = await response.json();
+      if (response.ok) {
+        if (teachers) {
+          const updatedTeachers = teachers.map((s) =>
+            s.id === user.id ? { ...s, ...filteredData } : s
+          );
+          setTeachers(updatedTeachers);
+        }
+        setTeacher({ ...user, ...filteredData });
+        onCloseRef.current();
+      } else {
+        console.error("Error updating teacher:", result.message);
+      }
     } catch (error) {
-      console.error("EditForm error:", error);
+      console.error("Request error:", error);
     }
   };
 

@@ -86,6 +86,9 @@ const userSchema = new Schema(
     ],
 
     // Used if it's a teacher
+    speciality: {
+      type: String,
+    },
     classes: [
       {
         type: String,

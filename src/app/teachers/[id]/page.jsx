@@ -1,9 +1,9 @@
 import Content from "./components/Content";
 
-export default function TeacherProfile() {
+export default function TeacherProfile({ params }) {
   return (
     <main className="w-full sm:mb-0 mb-20">
-      <Content />
+      <Content id={params.id} />
     </main>
   );
 }

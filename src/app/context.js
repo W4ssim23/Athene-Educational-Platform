@@ -4,10 +4,13 @@ const FetchingContext = createContext();
 
 export const FetchingProvider = ({ children }) => {
   const [students, setStudents] = useState(null);
+  const [teachers, setTeachers] = useState(null);
 
   const contextValue = {
     students,
     setStudents,
+    teachers,
+    setTeachers,
   };
 
   return (

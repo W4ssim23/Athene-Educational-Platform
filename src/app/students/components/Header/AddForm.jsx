@@ -34,8 +34,8 @@ export default function AddForm() {
   const onCloseRef = useRef(null);
 
   const onSubmit = async (data) => {
-    console.log("Submission !");
-    console.log(data);
+    // console.log("Submission !");
+    // console.log(data);
 
     try {
       const response = await fetch("/api/students/addone", {
@@ -46,7 +46,7 @@ export default function AddForm() {
         body: JSON.stringify(data),
       });
 
-      console.log("request sent");
+      // console.log("request sent");
 
       if (response.ok) {
         const result = await response.json();

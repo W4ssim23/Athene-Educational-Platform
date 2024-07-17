@@ -11,7 +11,7 @@ function TeacherCard({ teacher }) {
                 shadow-xl bg-white h-1/5 rounded-xl cursor-pointer  transition ease-in-out delay-50
                 hover:-translate-y-1 hover:scale-105 hover:bg-[#E4E5EC] duration-300"
       >
-        <Avatar src={teacher.pfp} className="h-[65px] w-[65px]" />
+        <Avatar fallback src={teacher.pfp} className="h-[65px] w-[65px]" />
         <h3 className=" text-[#303972] font-bold text-base ">
           {teacher.firstName + " " + teacher.lastName}
         </h3>
