@@ -11,6 +11,7 @@ import { check, xmark } from "@/assets"; //to change
 import Image from "next/image";
 
 export default function VotesStat({ data }) {
+  console.log(data);
   return (
     <ModalContent>
       {(onClose) => {
@@ -36,32 +37,26 @@ export default function VotesStat({ data }) {
 
               <div className="hidden  gap-5 sm:flex justify-between w-[90%] m-auto ">
                 {/* // confirm votes */}
-                <div className="flex flex-col bg-bgpurp rounded-md p-2 justify-start items-center gap-3">
+                <div className="flex flex-col bg-bgfakeWhite rounded-md p-2 justify-start items-center gap-3 w-[45%]">
                   <div className="flex gap-3">
                     <p className="">Yes Votes</p>
                     <Image className="w-[15px]" src={check} alt="" />
                   </div>
-                  <div className="overflow-y-scroll rounded-md h-[180px] px-8 flex gap-2 flex-col">
-                    <Voter />
-                    <Voter />
-                    <Voter />
-                    <Voter />
-                    <Voter />
-                    <Voter />
+                  <div className="overflow-y-scroll rounded-md h-[180px] px-8 flex gap-2 flex-col w-full">
+                    {data.votersListYes.map((voter) => (
+                      <Voter name={voter.name} />
+                    ))}
                   </div>
                 </div>
-                <div className="flex flex-col justify-start  items-center   bg-bgpurp rounded-md p-2 gap-3">
+                <div className="flex flex-col justify-start  items-center  bg-bgfakeWhite rounded-md p-2 gap-3 w-[45%]">
                   <div className="flex gap-3">
                     <p className="">No Votes</p>
                     <Image className="w-[15px]" src={xmark} alt="" />
                   </div>
-                  <div className="overflow-y-scroll px-8  rounded-md h-[180px] flex gap-2 flex-col">
-                    <Voter />
-                    <Voter />
-                    <Voter />
-                    <Voter />
-                    <Voter />
-                    <Voter />
+                  <div className="overflow-y-scroll px-8  rounded-md h-[180px] flex gap-2 flex-col w-full">
+                    {data.votersListNo.map((voter) => (
+                      <Voter name={voter.name} />
+                    ))}
                   </div>
                 </div>
               </div>
@@ -78,11 +73,11 @@ export default function VotesStat({ data }) {
   );
 }
 
-function Voter({ data }) {
+function Voter({ name }) {
   return (
     <div className="flex items-center gap-2 p-1">
       {/* user.name */}
-      <p>Zouitene Ouassim</p>
+      <p>{name}</p>
     </div>
   );
 }

@@ -7,13 +7,14 @@ import {
   ModalBody,
   ModalFooter,
   Input,
-  DateInput,
+  DatePicker,
   TimeInput,
   Textarea,
   Checkbox,
 } from "@nextui-org/react";
 import { useForm } from "react-hook-form";
-import { useRef } from "react";
+import { useRef, useState, useContext } from "react";
+import FetchingContext from "@/app/context";
 
 export default function AddForm({ title = "" }) {
   const {
@@ -24,36 +25,84 @@ export default function AddForm({ title = "" }) {
   const submitButtonRef = useRef(null);
   const onCloseRef = useRef(null);
 
-  //dir hasbk ki tb3t data 3la l object t3 date w time
+  const { events, setEvents } = useContext(FetchingContext);
+
+  const [eventDate, setEventDate] = useState(null);
+  const [eventStart, setEventStart] = useState(null);
+  const [eventEnd, setEventEnd] = useState(null);
+  const [dateError, setDateError] = useState(null);
+  const [timeError, setTimeError] = useState(null);
+
   const onSubmit = async (data) => {
-    console.log("submition !");
-    // console.log(data);
-    // this time this one is diffrent , it should ignore grade class and gender if they are similar to the old data
-    // i can just exclude the ampty fields , and compare the rest with the old data , that's why i changed the prop name to student
-    // if (Object.keys(filterEmptyValues(data)).length === 0) {
-    //   onCloseRef.current();
-    //   return;
-    // }
+    // Validate the date and time before submitting
+    if (!eventDate) {
+      setDateError("Date is required");
+      return;
+    } else {
+      setDateError(null);
+    }
 
-    // try {
-    //   const response = await fetch("/api/profile/edit", {
-    //     method: "POST",
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //     body: JSON.stringify({ ...filterEmptyValues(data), id: user.id }),
-    //   });
+    if (!eventStart) {
+      setTimeError("Start time is required");
+      return;
+    } else {
+      setTimeError(null);
+    }
 
-    //   const res = await response.json();
-    //   // console.log(res);
+    if (
+      eventEnd &&
+      eventStart &&
+      (eventEnd.hour < eventStart.hour ||
+        (eventEnd.hour === eventStart.hour &&
+          eventEnd.minute < eventStart.minute))
+    ) {
+      setTimeError("End time must be after start time");
+      return;
+    } else {
+      setTimeError(null);
+    }
 
-    //   if (response.ok) {
-    //     await handleSessionUpdate(filterEmptyValues(data));
-    //     onCloseRef.current();
-    //   }
-    // } catch (error) {
-    //   console.error("EditForm error:", error);
-    // }
+    const formattedData = {
+      title: data.title,
+      date: new Date(
+        eventDate.year,
+        eventDate.month - 1,
+        eventDate.day
+      ).toISOString(),
+      start: `${eventStart.hour}:${eventStart.minute}:${eventStart.second}`,
+      description: data.eventDiscreption,
+      eventEnd: eventEnd
+        ? `${eventEnd.hour}:${eventEnd.minute}:${eventEnd.second}`
+        : undefined,
+      votes: data.votes,
+      yesVotes: [],
+      noVotes: [],
+    };
+
+    try {
+      const response = await fetch("/api/events/add", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formattedData),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      // console.log("Event added successfully:", result);
+
+      // Update the events list
+      setEvents([result.event, ...events]);
+
+      // Close the modal
+      onCloseRef.current();
+    } catch (error) {
+      console.error("Error adding event:", error);
+    }
   };
 
   return (
@@ -81,35 +130,8 @@ export default function AddForm({ title = "" }) {
                   isInvalid={!!errors.title}
                   errorMessage={errors?.title?.message ?? ""}
                 />
-                <DateInput
-                  name="EventDate"
-                  className="mt-3 sm:mt-0"
-                  label="Event Date"
-                  variant="bordered"
-                  {...register("eventDate", {
-                    validate: (value) => {
-                      if (!value) return "Non Valid";
-                      return true;
-                    },
-                  })}
-                  isInvalid={!!errors.eventDate}
-                  errorMessage={errors?.eventDate?.message ?? ""}
-                />
-                <TimeInput
-                  label="Event Starts at"
-                  variant="bordered"
-                  {...register("eventStart", {
-                    validate: (value) => {
-                      if (!value) return "Non Valid";
-                      return true;
-                    },
-                  })}
-                  isInvalid={!!errors.eventStart}
-                  errorMessage={errors?.eventStart?.message ?? ""}
-                  //   onChange={(e) => console.log(e)}
-                />
                 <Textarea
-                  label="Event Discrption"
+                  label="Event Description"
                   variant="bordered"
                   {...register("eventDiscreption", {
                     validate: (value) => {
@@ -120,11 +142,27 @@ export default function AddForm({ title = "" }) {
                   isInvalid={!!errors.eventDiscreption}
                   errorMessage={errors?.eventDiscreption?.message ?? ""}
                 />
+                <DatePicker
+                  name="eventDate"
+                  className="mt-3 sm:mt-0"
+                  label="Event Date"
+                  variant="bordered"
+                  isInvalid={dateError}
+                  errorMessage={dateError}
+                  onChange={(e) => setEventDate(e)}
+                />
+                <TimeInput
+                  label="Event Starts at"
+                  variant="bordered"
+                  isInvalid={timeError}
+                  errorMessage={timeError}
+                  onChange={(e) => setEventStart(e)}
+                />
                 <TimeInput
                   className="mt-3 sm:mt-0"
-                  label="Event End at"
+                  label="Event Ends at"
                   variant="bordered"
-                  {...register("eventEnd")}
+                  onChange={(e) => setEventEnd(e)}
                 />
                 <Checkbox {...register("votes")}>Votes</Checkbox>
                 <button

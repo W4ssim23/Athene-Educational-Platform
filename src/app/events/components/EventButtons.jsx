@@ -8,17 +8,15 @@ import VotesStat from "./VotesStat";
 import DeleteWin from "./DeleteWin";
 import EditForm from "./EditForm";
 
-// TO ADD MODELS FOR EDIT VOTE AND DELETE
-
 export default function EventButtons({
   data,
   id,
   vote = { yes: false, no: false },
   role,
   ableToVote,
+  voterId,
+  voterName,
 }) {
-  //vote for the default value on the events the user already voted in , and the id is the user's id
-
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [windowType, setWindowType] = useState("");
 
@@ -36,19 +34,41 @@ export default function EventButtons({
   };
 
   const [voted, setVoted] = useState(vote);
-  const handleYes = useCallback((e) => {
-    if (voted.yes) return;
-    // yesClick(e);
-    //logic .....
-    setVoted(() => ({ yes: true, no: false }));
-  }, []);
 
-  const handleNo = useCallback((e) => {
-    if (voted.no) return;
-    // noClick(e);
-    //logic .....
-    setVoted(() => ({ yes: false, no: true }));
-  }, []);
+  const handleVote = useCallback(
+    async (voteType) => {
+      if (voteType === "yes" && voted.yes) return;
+      if (voteType === "no" && voted.no) return;
+
+      try {
+        const response = await fetch("/api/events/vote", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            eventId: id,
+            voterId,
+            voterName,
+            vote: voteType,
+          }),
+        });
+
+        if (!response.ok) {
+          console.log(await response.json());
+          throw new Error("Error voting");
+        }
+
+        setVoted(() => ({
+          yes: voteType === "yes",
+          no: voteType === "no",
+        }));
+      } catch (error) {
+        console.error("Error voting:", error);
+      }
+    },
+    [voted, id, voterId, voterName]
+  );
 
   if (role === "teacher") return null;
 
@@ -60,14 +80,14 @@ export default function EventButtons({
           hoverText="confirm"
           bg={voted.no ? "#999999" : "#4CBC9A"}
           size={"40px"}
-          onClick={handleYes}
+          onClick={() => handleVote("yes")}
         />
         <SmallButton
           picture={<NoVote />}
           hoverText="deny"
           bg={voted.yes ? "#999999" : "#FF4550"}
           size={"40px"}
-          onClick={handleNo}
+          onClick={() => handleVote("no")}
         />
       </div>
     );

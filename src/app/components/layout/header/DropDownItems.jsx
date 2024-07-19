@@ -10,7 +10,7 @@ export default function DropDownItems({ isAdmin = false }) {
         Profile
       </DropdownItem> */}
       {!isAdmin && (
-        <DropdownItem key="notification" href="/notification">
+        <DropdownItem key="notification" href="/notifications">
           Notification
         </DropdownItem>
       )}

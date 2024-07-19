@@ -2,7 +2,7 @@ import { CalendarR, Clock } from "../Icons";
 import { Button } from "@nextui-org/react";
 import EventButtons from "./EventButtons";
 
-const EventElement = ({ role, eventData }) => {
+const EventElement = ({ id, role, eventData, voterId, voterName }) => {
   const time =
     eventData?.end && eventData.end !== ""
       ? eventData.start + " - " + eventData.end
@@ -26,7 +26,14 @@ const EventElement = ({ role, eventData }) => {
           <IconText picture={<Clock />} Text={time} />
         </div>
       </div>
-      <EventButtons role={role} ableToVote={eventData.votes} data={eventData} />
+      <EventButtons
+        role={role}
+        ableToVote={eventData.votes}
+        data={eventData}
+        id={id}
+        voterId={voterId}
+        voterName={voterName}
+      />
     </div>
   );
 };

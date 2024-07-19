@@ -30,7 +30,7 @@ export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center sm:pt-[8%] pt-28 gap-8 ">
       <h1 className="text-4xl font-bold text-primary">Welcome Back !</h1>
-      <Avatar src={session.user.pfp} className="h-[140px] w-[140px]" />
+      <Avatar fallback src={session.user.pfp} className="h-[140px] w-[140px]" />
       <h2 className="text-4xl font-bold w-3/4 text-center">
         {session.user.firstName} {session.user.lastName}
       </h2>
