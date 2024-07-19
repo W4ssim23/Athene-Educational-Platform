@@ -45,7 +45,14 @@ function EventsList() {
     // }
   }, [events]);
 
-  if (!events || !session) return <p>Skeleton</p>;
+  if (!events || !session)
+    return (
+      <>
+        <EventElementSkeleton />
+        <EventElementSkeleton />
+        <EventElementSkeleton />
+      </>
+    );
 
   if (events.length === 0) {
     return (
@@ -86,3 +93,25 @@ function EventsList() {
 }
 
 export default EventsList;
+
+export const EventElementSkeleton = () => {
+  return (
+    <div className="relative flex flex-col sm:flex-row w-[100%] sm:w-[75%] min-h-[175px] rounded-lg overflow-hidden bg-gray-200 p-2 animate-pulse">
+      <div className="absolute top-0 left-0 sm:h-full sm:w-[10px] bg-gray-300 w-full h-[10px]"></div>
+      <div className="flex flex-col items-start p-2 pl-[4%] py-[18px] sm:pl-[8%] gap-2">
+        <div className="w-3/4 h-6 bg-gray-300 rounded"></div>
+        <div className="w-full h-4 bg-gray-300 rounded mt-2"></div>
+        <div className="w-2/3 h-4 bg-gray-300 rounded mt-2"></div>
+        <div className="flex flex-col gap-2 mt-4">
+          <div className="w-1/2 h-4 bg-gray-300 rounded"></div>
+          <div className="w-1/3 h-4 bg-gray-300 rounded"></div>
+        </div>
+      </div>
+      <div className="sm:absolute sm:top-0 sm:right-0 sm:h-full flex sm:flex-col items-center justify-center gap-6 pb-[2%] sm:pb-0 sm:pr-[3%]">
+        <div className="w-10 h-10 bg-gray-300 rounded-full"></div>
+        <div className="w-10 h-10 bg-gray-300 rounded-full"></div>
+        <div className="w-10 h-10 bg-gray-300 rounded-full"></div>
+      </div>
+    </div>
+  );
+};

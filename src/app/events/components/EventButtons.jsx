@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useState, useEffect } from "react";
 import SmallButton from "@/app/components/ui/SmallButton";
 import { NoVote, YesVote, Edit, Votes, Trash } from "../Icons";
 import { Modal, useDisclosure } from "@nextui-org/react";
@@ -11,7 +11,7 @@ import EditForm from "./EditForm";
 export default function EventButtons({
   data,
   id,
-  vote = { yes: false, no: false },
+  vote,
   role,
   ableToVote,
   voterId,
@@ -33,7 +33,17 @@ export default function EventButtons({
     }
   };
 
-  const [voted, setVoted] = useState(vote);
+  const checkUserVote = useCallback(() => {
+    const votedYes = data.votersListYes.some((voter) => voter.id === voterId);
+    const votedNo = data.votersListNo.some((voter) => voter.id === voterId);
+    return { yes: votedYes, no: votedNo };
+  }, [data.votersListYes, data.votersListNo, voterId]);
+
+  const [voted, setVoted] = useState({ yes: false, no: false });
+
+  useEffect(() => {
+    setVoted(checkUserVote());
+  }, [checkUserVote]);
 
   const handleVote = useCallback(
     async (voteType) => {
