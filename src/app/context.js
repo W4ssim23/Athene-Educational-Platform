@@ -6,6 +6,8 @@ export const FetchingProvider = ({ children }) => {
   const [students, setStudents] = useState(null);
   const [teachers, setTeachers] = useState(null);
   const [events, setEvents] = useState(null);
+  const [classes, setClasses] = useState(null);
+  const [modules, setModules] = useState(null);
 
   const contextValue = {
     students,
@@ -14,6 +16,10 @@ export const FetchingProvider = ({ children }) => {
     setTeachers,
     events,
     setEvents,
+    classes,
+    setClasses,
+    modules,
+    setModules,
   };
 
   return (

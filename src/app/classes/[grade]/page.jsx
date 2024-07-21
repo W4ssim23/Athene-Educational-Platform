@@ -1,386 +1,92 @@
-import GradeList from "./GradeList";
+"use client";
 
-export default async function Grades({ params }) {
-  const { grade } = params; //will be used in the fetch
+import { useEffect, useState, useContext } from "react";
+import GradeList from "./GradeList";
+import FetchingContext from "@/app/context";
+
+export default function Grades({ params }) {
+  const { grade } = params;
+  const { classes, setClasses } = useContext(FetchingContext);
+  const [loading, setLoading] = useState(true);
+
+  //should have a display when the list is ampty
+
+  useEffect(() => {
+    const fetchClasses = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch(`/api/classes/${grade}`, {
+          method: "GET",
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setClasses(data.classes);
+        } else {
+          setClasses([[], [], [], [], []]);
+        }
+      } catch (error) {
+        console.error("Failed to fetch classes:", error);
+        setClasses([[], [], [], [], []]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchClasses();
+  }, [grade]);
+
+  useEffect(() => {
+    console.log("updated");
+  }, [classes]);
+
+  if (loading) return <GradesSkeleton />;
+
   return (
-    <main className="flex min-h-screen flex-col  gap-8">
-      {/* will be just Classes because the request will get the classe of the specefic grade only  */}
-      <GradeList grade={grade} levels={Classes[grade]} />
+    <main className="flex min-h-screen flex-col gap-8">
+      <GradeList grade={grade} levels={classes} />
     </main>
   );
 }
 
-const Classes = {
-  lycee: [
-    [
-      {
-        id: 1,
-        name: "1S1",
-        grade: "lycee",
-        year: 1,
-        number: 1,
-        modules: [
-          {
-            id: 1,
-            name: "math",
-            teacherName: "Zouitene Ouassim",
-            teacherPfp: "a link",
-            teacherId: 1,
-            courses: [
-              {
-                id: 1,
-                name: "Serie De Fourie",
-                type: "Cours",
-                date: "2024-07-12",
-                link: "a link",
-                file: "xlsx",
-                comments: [
-                  {
-                    student: { name: "Zouitene Ouassim", pfp: "a link", id: 7 },
-                    comment: "This lecture was really helpful!",
-                  },
-                  {
-                    student: { name: "Chelouah Leila", pfp: "a link", id: 2 },
-                    comment: "Le module est facile on principe",
-                  },
-                ],
-              },
-              {},
-              {},
-            ],
-          },
-          {},
-          {},
-          {},
-        ],
-        students: [
-          { name: "wassim", pfp: "a link", id: 1 },
-          { name: "wassim", pfp: "a link", id: 2 },
-          { name: "wassim", pfp: "a link", id: 3 },
-        ],
-      },
-      {
-        id: 2,
-        name: "1S1",
-        grade: "lycee",
-        year: 1,
-        number: 2,
-        content: { courses: [], wajib: [], optional: [] },
-      },
-      {
-        id: 3,
-        name: "1S1",
-        grade: "lycee",
-        year: 1,
-        number: 3,
-        content: { courses: [], wajib: [], optional: [] },
-      },
-      {
-        id: 4,
-        name: "1S1",
-        grade: "lycee",
-        year: 1,
-        number: 4,
-        content: { courses: [], wajib: [], optional: [] },
-      },
-    ],
-    [
-      {
-        id: 5,
-        name: "1S1",
-        grade: "lycee",
-        year: 2,
-        number: 1,
-        content: { courses: [], wajib: [], optional: [] },
-      },
-      {
-        id: 6,
-        name: "1S1",
-        grade: "lycee",
-        year: 2,
-        number: 2,
-        content: { courses: [], wajib: [], optional: [] },
-      },
-      {
-        id: 7,
-        name: "1S1",
-        grade: "lycee",
-        year: 2,
-        number: 3,
-        content: { courses: [], wajib: [], optional: [] },
-      },
-    ],
-    [
-      {
-        id: 8,
-        name: "1S1",
-        grade: "lycee",
-        year: 3,
-        number: 1,
-        content: { courses: [], wajib: [], optional: [] },
-      },
-      {
-        id: 9,
-        name: "1S1",
-        grade: "lycee",
-        year: 3,
-        number: 2,
-        content: { courses: [], wajib: [], optional: [] },
-      },
-      {
-        id: 10,
-        name: "1S1",
-        grade: "lycee",
-        year: 3,
-        number: 3,
-        content: { courses: [], wajib: [], optional: [] },
-      },
-    ],
-  ],
-  cem: [
-    [
-      {
-        id: 1,
-        name: "1S1",
-        grade: "cem",
-        year: 1,
-        number: 1,
-        content: { courses: [], wajib: [], optional: [] },
-      },
-      {
-        id: 2,
-        name: "1S1",
-        grade: "cem",
-        year: 1,
-        number: 2,
-        content: { courses: [], wajib: [], optional: [] },
-      },
-      {
-        id: 3,
-        name: "1S1",
-        grade: "cem",
-        year: 1,
-        number: 3,
-        content: { courses: [], wajib: [], optional: [] },
-      },
-      {
-        id: 4,
-        name: "1S1",
-        grade: "cem",
-        year: 1,
-        number: 4,
-        content: { courses: [], wajib: [], optional: [] },
-      },
-    ],
-    [
-      {
-        id: 5,
-        name: "1S1",
-        grade: "cem",
-        year: 2,
-        number: 1,
-        content: { courses: [], wajib: [], optional: [] },
-      },
-      {
-        id: 6,
-        name: "1S1",
-        grade: "cem",
-        year: 2,
-        number: 2,
-        content: { courses: [], wajib: [], optional: [] },
-      },
-      {
-        id: 7,
-        name: "1S1",
-        grade: "cem",
-        year: 2,
-        number: 3,
-        content: { courses: [], wajib: [], optional: [] },
-      },
-    ],
-    [
-      {
-        id: 8,
-        name: "1S1",
-        grade: "cem",
-        year: 3,
-        number: 1,
-        content: { courses: [], wajib: [], optional: [] },
-      },
-      {
-        id: 9,
-        name: "1S1",
-        grade: "cem",
-        year: 3,
-        number: 2,
-        content: { courses: [], wajib: [], optional: [] },
-      },
-      {
-        id: 10,
-        name: "1S1",
-        grade: "cem",
-        year: 3,
-        number: 3,
-        content: { courses: [], wajib: [], optional: [] },
-      },
-    ],
-    [
-      {
-        id: 11,
-        name: "1S1",
-        grade: "cem",
-        year: 4,
-        number: 1,
-        content: { courses: [], wajib: [], optional: [] },
-      },
-      {
-        id: 12,
-        name: "1S1",
-        grade: "cem",
-        year: 4,
-        number: 2,
-        content: { courses: [], wajib: [], optional: [] },
-      },
-      {
-        id: 13,
-        name: "1S1",
-        grade: "cem",
-        year: 4,
-        number: 3,
-        content: { courses: [], wajib: [], optional: [] },
-      },
-    ],
-  ],
-  primaire: [
-    [
-      {
-        id: 1,
-        name: "1S1",
-        grade: "primaire",
-        year: 1,
-        number: 1,
-        content: { courses: [], wajib: [], optional: [] },
-      },
-      {
-        id: 2,
-        name: "1S1",
-        grade: "primaire",
-        year: 1,
-        number: 2,
-        content: { courses: [], wajib: [], optional: [] },
-      },
-      {
-        id: 3,
-        name: "1S1",
-        grade: "primaire",
-        year: 1,
-        number: 3,
-        content: { courses: [], wajib: [], optional: [] },
-      },
-      {
-        id: 4,
-        name: "1S1",
-        grade: "primaire",
-        year: 1,
-        number: 4,
-        content: { courses: [], wajib: [], optional: [] },
-      },
-    ],
-    [
-      {
-        id: 5,
-        name: "1S1",
-        grade: "primaire",
-        year: 2,
-        number: 1,
-        content: { courses: [], wajib: [], optional: [] },
-      },
-      {
-        id: 6,
-        name: "1S1",
-        grade: "primaire",
-        year: 2,
-        number: 2,
-        content: { courses: [], wajib: [], optional: [] },
-      },
-      {
-        id: 7,
-        name: "1S1",
-        grade: "primaire",
-        year: 2,
-        number: 3,
-        content: { courses: [], wajib: [], optional: [] },
-      },
-    ],
-    [
-      {
-        id: 8,
-        name: "1S1",
-        grade: "primaire",
-        year: 3,
-        number: 1,
-        content: { courses: [], wajib: [], optional: [] },
-      },
-      {
-        id: 9,
-        name: "1S1",
-        grade: "primaire",
-        year: 3,
-        number: 2,
-        content: { courses: [], wajib: [], optional: [] },
-      },
-      {
-        id: 10,
-        name: "1S1",
-        grade: "primaire",
-        year: 3,
-        number: 3,
-        content: { courses: [], wajib: [], optional: [] },
-      },
-    ],
-    [
-      {
-        id: 11,
-        name: "1S1",
-        grade: "primaire",
-        year: 4,
-        number: 1,
-        content: { courses: [], wajib: [], optional: [] },
-      },
-      {
-        id: 12,
-        name: "1S1",
-        grade: "primaire",
-        year: 4,
-        number: 2,
-        content: { courses: [], wajib: [], optional: [] },
-      },
-      {
-        id: 13,
-        name: "1S1",
-        grade: "primaire",
-        year: 4,
-        number: 3,
-        content: { courses: [], wajib: [], optional: [] },
-      },
-    ],
-    [
-      {
-        id: 14,
-        name: "1S1",
-        grade: "primaire",
-        year: 5,
-        number: 1,
-        content: { courses: [], wajib: [], optional: [] },
-      },
-      {
-        id: 15,
-        name: "1S1",
-        grade: "primaire",
-        year: 5,
-        number: 2,
-        content: { courses: [], wajib: [], optional: [] },
-      },
-    ],
-  ],
+const GradesSkeleton = () => {
+  return (
+    <main className="flex min-h-screen flex-col gap-12 animate-pulse pt-24">
+      <div className="flex  gap-4 w-full flex-wrap">
+        {[...Array(7)].map((_, index) => (
+          <div
+            key={index}
+            className="p-2 flex flex-col justify-center items-center text-center font-poppins rounded-3xl shadow-md
+                relative overflow-hidden cursor-pointer 
+                w-[17%] min-h-[120px] sm:min-w-[170px] min-w-[150px]
+                transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-105 duration-300 
+                bg-opacity-30 bg-gray-400"
+          ></div>
+        ))}
+      </div>
+      <div className="flex  gap-4 flex-wrap">
+        {[...Array(3)].map((_, index) => (
+          <div
+            key={index}
+            className="p-2 flex flex-col justify-center items-center text-center font-poppins rounded-3xl shadow-md
+                relative overflow-hidden cursor-pointer 
+                w-[17%] min-h-[120px] sm:min-w-[170px] min-w-[150px]
+                transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-105 duration-300 
+                bg-opacity-30 bg-gray-400"
+          ></div>
+        ))}
+      </div>
+      <div className="flex  gap-4 flex-wrap">
+        {[...Array(5)].map((_, index) => (
+          <div
+            key={index}
+            className="p-2 flex flex-col justify-center items-center text-center font-poppins rounded-3xl shadow-md
+                relative overflow-hidden cursor-pointer 
+                w-[17%] min-h-[120px] sm:min-w-[170px] min-w-[150px]
+                transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-105 duration-300 
+                bg-opacity-30 bg-gray-400"
+          ></div>
+        ))}
+      </div>
+    </main>
+  );
 };

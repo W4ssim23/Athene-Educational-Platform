@@ -14,7 +14,8 @@ const SearchBar = () => {
   const handleSearch = useDebouncedCallback(
     async (e) => {
       // console.log("searching for:", e.target.value);
-      if (pathname === "/studnets") {
+      // console.log("pathname:", pathname);
+      if (pathname === "/students") {
         const response = await fetch(`/api/students?search=${e.target.value}`, {
           method: "GET",
           headers: {

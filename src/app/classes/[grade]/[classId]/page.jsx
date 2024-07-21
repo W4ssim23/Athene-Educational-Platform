@@ -1,20 +1,46 @@
+"use client";
+
 import AdminButtons from "./AdminButtons";
+import { useState, useEffect, useContext } from "react";
+import FetchingContext from "@/app/context";
 
-export default async function Aclass({ params }) {
-  // console.log(params);
+export default function Aclass({ params }) {
+  const { grade, classId } = params;
 
-  const modules = [
-    { name: "Math", id: "1", teacher: "Zouitene Ouassim" },
-    { name: "Physique", id: "2", teacher: "El Hachimi Mohamed" },
-    { name: "Francais", id: "3", teacher: "El Hachimi Mohamed" },
-    { name: "Anglais", id: "4", teacher: "El Hachimi Mohamed" },
-    { name: "Arabe", id: "5", teacher: "El Hachimi Mohamed" },
-    { name: "Histoire", id: "6", teacher: "El Hachimi Mohamed" },
-  ];
+  const [loading, setLoading] = useState(true);
+  const { modules, setModules } = useContext(FetchingContext);
+
+  useEffect(() => {
+    const fetchClasses = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch(`/api/classes/${grade}/${classId}`, {
+          method: "GET",
+        });
+        if (response.ok) {
+          const data = await response.json();
+          // console.log(data.modules);
+          setModules(data.modules);
+        } else {
+          console.log("Failed to fetch modules");
+          setModules([]);
+        }
+      } catch (error) {
+        console.error("Failed to fetch modules:", error);
+        setModules([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchClasses();
+  }, [grade, classId]);
+
+  if (loading) return <SkeletonModuleList />;
 
   return (
     <main className=" min-h-screen w-full flex flex-col gap-8 ">
-      <AdminButtons />
+      <AdminButtons params={params} />
       <ModuleList params={params} modules={modules} />
     </main>
   );
@@ -22,7 +48,6 @@ export default async function Aclass({ params }) {
 
 import Devoir from "./icons/Devoir";
 import Courses from "./icons/Courses";
-import { Avatar } from "@nextui-org/react";
 import SmallButton from "@/app/components/ui/SmallButton";
 import Link from "next/link";
 
@@ -73,6 +98,42 @@ const ModuleList = ({ params, modules }) => {
       <div className="flex gap-5 flex-wrap justify-center sm:justify-start">
         {modules.map((module) => (
           <Module key={module.id} params={params} module={module} />
+        ))}
+      </div>
+      <div className="sm:hidden">
+        <br />
+        <br />
+      </div>
+    </div>
+  );
+};
+
+const SkeletonModuleCard = () => {
+  return (
+    <div
+      className="animate-pulse w-[90%] max-w-[290px] md:max-w-[280px] rounded-[20px] outline outline-gray-300 
+      shadow-md flex flex-col justify-between transition ease-in-out delay-50 hover:-translate-y-1
+      hover:scale-105 duration-300"
+    >
+      <div className="h-[70px] rounded-t-[20px] bg-gray-300"></div>
+      <div className="relative h-[140px] bg-gray-200 rounded-b-[20px] flex flex-col justify-end p-4">
+        <div className="h-4 bg-gray-300 rounded w-3/4 mb-3"></div>
+        <div className="h-3 bg-gray-300 rounded w-1/2 mb-3"></div>
+        <div className="flex gap-3">
+          <div className="h-10 w-10 bg-gray-300 rounded-full"></div>
+          <div className="h-10 w-10 bg-gray-300 rounded-full"></div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export const SkeletonModuleList = () => {
+  return (
+    <div className="flex flex-col gap-5 sm:gap-9 h-screen">
+      <div className="flex gap-5 flex-wrap justify-center sm:justify-start">
+        {[...Array(6)].map((_, index) => (
+          <SkeletonModuleCard key={index} />
         ))}
       </div>
       <div className="sm:hidden">

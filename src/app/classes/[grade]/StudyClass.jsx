@@ -55,6 +55,7 @@ function StudyClass({ grade, year, number, classId }) {
                 bg-opacity-30 ${color}`}
     >
       <Image
+        priority
         src={picture}
         alt="grade level"
         className={`absolute ${position}`}

@@ -8,6 +8,11 @@ export default function Chat() {
     // </main>
     <main className="w-full">
       <Chatt />
+      <div className="sm:hidden">
+        <br />
+        <br />
+        <br />
+      </div>
     </main>
   );
   // return (

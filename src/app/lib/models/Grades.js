@@ -24,9 +24,9 @@ const courseSchema = new Schema({
 
 const moduleSchema = new Schema({
   name: { type: String, required: true },
-  teacherName: { type: String, required: true },
-  teacherPfp: { type: String, required: true },
-  teacherId: { type: Number, required: true },
+  // teacherName: { type: String, required: true }, //to be removed
+  // teacherPfp: { type: String, required: true },
+  teacherId: { type: String, required: true },
   courses: [courseSchema],
 });
 

@@ -11,11 +11,17 @@ import {
   Select,
   SelectItem,
 } from "@nextui-org/react";
-import { useState } from "react";
+import { useState, useRef, useContext } from "react";
+import FetchingContext from "@/app/context";
 
 export default function Add({ grade }) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [selectedYear, setSelectedYear] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const { classes, setClasses } = useContext(FetchingContext);
+
+  const onCloseRef = useRef(null);
 
   const years =
     grade === "lycee"
@@ -23,6 +29,34 @@ export default function Add({ grade }) {
       : grade === "cem"
       ? ["1", "2", "3", "4"]
       : ["1", "2", "3", "4", "5"];
+
+  const handleSubmit = async () => {
+    if (!selectedYear) return;
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/classes/${grade}/add`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ year: selectedYear.currentKey }),
+      });
+
+      const data = await res.json();
+      // console.log(data.classs);
+      setSelectedYear(null);
+      setLoading(false);
+      if (res.ok) {
+        const updatedClasses = [...classes];
+        updatedClasses[selectedYear.currentKey - 1].push(data.classs);
+        setClasses(updatedClasses);
+        onCloseRef.current();
+      }
+    } catch (error) {
+      setLoading(false);
+      console.error("Add class error:", error);
+    }
+  };
 
   return (
     <div className="flex flex-col items-end">
@@ -35,46 +69,46 @@ export default function Add({ grade }) {
       </Button>
       <Modal isOpen={isOpen} onOpenChange={onOpenChange} placement="center">
         <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalHeader className="flex flex-col gap-1">
-                Add Class
-              </ModalHeader>
-              <ModalBody className="w-full flex flex-col items-center">
-                <Select
-                  label="Year"
-                  placeholder="Select an Year"
-                  className="max-w-xs"
-                  onSelectionChange={(e) => {
-                    // console.log(e);
-                    setSelectedYear(e);
-                  }}
-                >
-                  {years.map((year) => (
-                    <SelectItem key={year} value={year}>
-                      {year}
-                    </SelectItem>
-                  ))}
-                </Select>
-              </ModalBody>
-              <ModalFooter>
-                <Button color="danger" variant="light" onPress={onClose}>
-                  Cancel
-                </Button>
-                <Button
-                  color="primary"
-                  onPress={() => {
-                    if (selectedYear) {
-                      setSelectedYear(null);
-                      onClose();
-                    }
-                  }}
-                >
-                  Add
-                </Button>
-              </ModalFooter>
-            </>
-          )}
+          {(onClose) => {
+            onCloseRef.current = onClose;
+            return (
+              <>
+                <ModalHeader className="flex flex-col gap-1">
+                  Add Class
+                </ModalHeader>
+                <ModalBody className="w-full flex flex-col items-center">
+                  <Select
+                    label="Year"
+                    placeholder="Select a Year"
+                    className="max-w-xs"
+                    onSelectionChange={(e) => setSelectedYear(e)}
+                  >
+                    {years.map((year) => (
+                      <SelectItem key={year} value={year}>
+                        {year}
+                      </SelectItem>
+                    ))}
+                  </Select>
+                </ModalBody>
+                <ModalFooter>
+                  <Button color="danger" variant="light" onPress={onClose}>
+                    Cancel
+                  </Button>
+                  <Button
+                    isLoading={loading}
+                    color="primary"
+                    onPress={() => {
+                      if (selectedYear) {
+                        handleSubmit();
+                      }
+                    }}
+                  >
+                    Add
+                  </Button>
+                </ModalFooter>
+              </>
+            );
+          }}
         </ModalContent>
       </Modal>
     </div>
