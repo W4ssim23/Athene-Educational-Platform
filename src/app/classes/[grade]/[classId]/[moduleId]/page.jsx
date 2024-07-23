@@ -70,7 +70,7 @@ const ListHeader = ({ attchType, setAttchType }) => {
         {attachmentTypes.map((type) => (
           <div
             key={type}
-            onClick={() => setAttchType(type)}
+            onClick={() => setAttchType(type.replace(/\s/g, ""))}
             className={
               attchType === type
                 ? "text-primary before:absolute before:h-[5px] before:w-full before:bottom-[-25px] before:left-0 transition-all ease-in-out before:bg-primary relative"
@@ -97,7 +97,7 @@ const SelectComp = ({ attchType, setAttchType }) => {
   return (
     <select
       value={attchType}
-      onChange={(e) => setAttchType(e.target.value)}
+      onChange={(e) => setAttchType(e.target.value.replace(/\s/g, ""))}
       className="sm:hidden placeholder:text-textgray text-primary  border-none text-[20px] font-kumbhfont font-[700] rounded-lg mb-5 outline-none w-full h-12 text-center"
     >
       {attachmentTypes.map((type) => (
@@ -253,11 +253,15 @@ function AddForm({ title = "", params }) {
     );
 
     const result = await response.json();
+    // console.log(dataMapping);
+    // console.log(result.course.type);
+    // console.log(dataMapping[result.course.type]);
+    // console.log(result);
     if (response.ok) {
       const newData = {
         ...dataMapping,
-        [result.course.type]: [
-          ...dataMapping[result.course.type],
+        [result.course.type.replace(/\s/g, "")]: [
+          ...dataMapping[result.course.type.replace(/\s/g, "")],
           result.course,
         ],
       };

@@ -4,12 +4,12 @@ import { Lycee, Cem, Primaire } from "@/app/lib/models/Grades";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
-export async function GET(req, { params }) {
+export async function POST(req, { params }) {
   try {
     const session = await getServerSession(authOptions);
     const { user } = session;
 
-    if (!user) {
+    if (!user || user.role === "student") {
       return NextResponse.json(
         { message: "You are not authorized to perform this action." },
         { status: 401 }
@@ -18,9 +18,10 @@ export async function GET(req, { params }) {
 
     await connectMongoDB();
 
-    const { grade, classId, moduleId, coureseId } = params;
+    const { grade, classId, moduleId, courseId } = params;
+    const { comment } = await req.json();
 
-    if (!grade || !classId || !moduleId || !coureseId) {
+    if (!grade || !classId || !moduleId || !courseId || !comment) {
       return NextResponse.json(
         { message: "Not enough data provided!" },
         { status: 400 }
@@ -70,7 +71,7 @@ export async function GET(req, { params }) {
     }
 
     const course = mod.courses.find(
-      (course) => course._id.toString() === coureseId
+      (course) => course._id.toString() === courseId
     );
 
     if (!course) {
@@ -80,28 +81,26 @@ export async function GET(req, { params }) {
       );
     }
 
-    const courseData = {
-      id: course._id,
-      courseName: course.name,
-      courseType: course.type,
-      courseDate: course.date.toISOString().split("T")[0],
-      courseLink: course.link,
-      courseFile: course.file,
-      className: cls.name,
-      moduleName: mod.name,
-      comments: course.comments.map((comment) => ({
-        studentName: comment.student.name,
-        studentPfp: comment.student.pfp,
-        studentId: comment.student.id,
-        comment: comment.comment,
-      })),
+    const newComment = {
+      student: {
+        name: user.firstName + " " + user.lastName,
+        pfp: user.pfp,
+        id: user.id,
+      },
+      comment: comment,
     };
 
-    return NextResponse.json({ course: courseData }, { status: 200 });
+    course.comments.push(newComment);
+    await classData.save();
+
+    return NextResponse.json(
+      { message: "Comment added successfully!" },
+      { status: 200 }
+    );
   } catch (error) {
     console.error("Fetch error:", error);
     return NextResponse.json(
-      { message: "An error occurred while fetching the course data." },
+      { message: "An error occurred while adding the comment." },
       { status: 500 }
     );
   }
