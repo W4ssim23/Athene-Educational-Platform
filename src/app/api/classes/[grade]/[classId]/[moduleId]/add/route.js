@@ -9,12 +9,12 @@ export async function POST(req, { params }) {
     const session = await getServerSession(authOptions);
     const { user } = session;
 
-    // if (!user || user.role !== "teacher") {
-    //   return NextResponse.json(
-    //     { message: "You are not authorized to perform this action." },
-    //     { status: 401 }
-    //   );
-    // }
+    if (!user || user.role !== "teacher") {
+      return NextResponse.json(
+        { message: "You are not authorized to perform this action." },
+        { status: 401 }
+      );
+    }
 
     await connectMongoDB();
 
