@@ -46,6 +46,7 @@ export default function Aclass({ params }) {
   );
 }
 
+import { Avatar } from "@nextui-org/react";
 import Devoir from "./icons/Devoir";
 import Courses from "./icons/Courses";
 import SmallButton from "@/app/components/ui/SmallButton";
@@ -69,8 +70,11 @@ const Module = ({ module, params }) => {
           <p className="absolute top-[30%] left-4 text-blue-800">
             {module.teacher}
           </p>
-          {/* to be changed with the actual avatar */}
-          <div className="w-[65px] h-[65px] outline-white outline outline-[4px] absolute top-[-25px] bg-pfpclr rounded-full"></div>
+          <Avatar
+            fallback
+            src={module.teacherPfp}
+            className="w-[65px] h-[65px] outline-white outline outline-[4px] absolute top-[-25px]  rounded-full"
+          />
           <div className="flex gap-3">
             {/* redirect to devoir .... directly by the & in the url */}
             <SmallButton

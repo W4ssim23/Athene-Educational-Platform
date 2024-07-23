@@ -43,7 +43,8 @@ const Content = () => {
           {/* take parent and edviser in count later */}
           {user.role === "teacher" && (
             <p className="font-poppins text-[#A098AE]">
-              {userData.module + " Teacher"}
+              {/* {userData.module + " Teacher"} */}
+              {"A Teacher"}
             </p>
           )}
           {user.role === "student" && (

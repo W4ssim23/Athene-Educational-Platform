@@ -8,6 +8,7 @@ export const FetchingProvider = ({ children }) => {
   const [events, setEvents] = useState(null);
   const [classes, setClasses] = useState(null);
   const [modules, setModules] = useState(null);
+  const [dataMapping, setDataMapping] = useState([[], [], [], []]);
 
   const contextValue = {
     students,
@@ -20,6 +21,8 @@ export const FetchingProvider = ({ children }) => {
     setClasses,
     modules,
     setModules,
+    dataMapping,
+    setDataMapping,
   };
 
   return (

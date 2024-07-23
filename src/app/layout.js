@@ -5,6 +5,8 @@ import "./globals.css";
 import NavBar from "./components/layout/navbar/NavBar";
 import Header from "./components/layout/header/Header";
 
+import { Analytics } from "@vercel/analytics/react";
+
 const poppins = Poppins({ subsets: ["latin"], weight: ["400", "700"] });
 
 export const metadata = {
@@ -22,6 +24,7 @@ export default function RootLayout({ children }) {
             <div className="p-[15px] sm:p-[30px] flex flex-col gap-9">
               <Header />
               {children}
+              <Analytics />
             </div>
           </div>
         </AuthProvider>

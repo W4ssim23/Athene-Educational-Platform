@@ -82,7 +82,7 @@ export default function UploadPfP({ pfp }) {
                 handleChange={handleImageChange}
                 name="Picture"
                 types={["JPG", "PNG", "JPEG"]}
-                maxSize={1}
+                maxSize={5}
               />
               <Avatar
                 fallback

@@ -2,11 +2,29 @@
 import { useState } from "react";
 import Link from "next/link";
 import Attached from "./Attached";
-import AddingElement from "../../../../events/components/AddingElement";
+import { useEffect, useContext } from "react";
+import FetchingContext from "@/app/context";
+
+import { Button, Avatar } from "@nextui-org/react";
+import Plus from "@/app/events/Icons/Pluss";
+import { Modal, useDisclosure } from "@nextui-org/modal";
+import { useRef } from "react";
+
+import {
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Input,
+} from "@nextui-org/react";
+import { useForm } from "react-hook-form";
+
+import { useSession } from "next-auth/react";
+import { Select, SelectItem } from "@nextui-org/react";
+import { FileUploader } from "react-drag-drop-files";
 
 // Main component to display a class with params
 export default function Aclass({ params }) {
-  console.log(params);
   return (
     <main className="flex min-h-screen flex-col items-center w-full">
       <ModulePage params={params} />
@@ -94,21 +112,45 @@ const SelectComp = ({ attchType, setAttchType }) => {
 // Main module page component
 const ModulePage = ({ params }) => {
   const [attchType, setAttchType] = useState("Cours");
+  const [loading, setLoading] = useState(true);
 
-  // Fetch data based on attachment type
-  const dataMapping = {
-    Cours: Courses,
-    Devoir: Devoir,
-    Epreuves: Epreuves,
-    EvaluationContinue: EvaluationContinue,
-  };
+  const { dataMapping, setDataMapping } = useContext(FetchingContext);
+
+  // To test route
+  useEffect(() => {
+    const fetchModules = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch(
+          `/api/classes/${params.grade}/${params.classId}/${params.moduleId}`,
+          {
+            method: "GET",
+          }
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setDataMapping(data.courses);
+        } else {
+          console.log("Failed to fetch modules");
+        }
+      } catch (error) {
+        console.error("Failed to fetch modules:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchModules();
+  }, [params.grade, params.classId, params.moduleId]);
 
   const data = dataMapping[attchType] || [];
+
+  if (loading) return <SkeletonAclass />;
 
   return (
     <div className="flex flex-col w-full gap-5 sm:gap-9 gap-x-0 sm:gap-x-8">
       <div className="flex flex-col gap-5 sm:gap-9 items-center">
-        <AddingElement role="admin" pfp="" />
+        <AddingElement params={params} />
         <div className="w-[95%] sm:w-[75%] rounded-xl">
           <SelectComp attchType={attchType} setAttchType={setAttchType} />
           <ListHeader attchType={attchType} setAttchType={setAttchType} />
@@ -122,88 +164,236 @@ const ModulePage = ({ params }) => {
     </div>
   );
 };
-// Testing Data
 
-const Courses = [
-  { courseName: "Almost Heroes", courseDate: "2/19/2025", id: "1" },
-  { courseName: "Trinity and Beyond", courseDate: "9/4/2024", id: "1" },
-  {
-    courseName: "Devil Times Five (a.k.a. Peopletoys)",
-    courseDate: "7/18/2023",
-    id: "1",
-  },
-  { courseName: "Bling: A Planet Rock", courseDate: "4/29/2023", id: "1" },
-  {
-    courseName: "Gross Anatomy (a.k.a. A Cut Above)",
-    courseDate: "12/13/2024",
-    id: "1",
-  },
-  { courseName: "Good Man in Africa, A", courseDate: "1/13/2024", id: "1" },
-  { courseName: "Outlaw of Gor", courseDate: "4/23/2025", id: "1" },
-  { courseName: "White Noise 2: The Light", courseDate: "7/22/2023", id: "1" },
-  {
-    courseName: "Guest from the Future (Gostya iz buduschego)",
-    courseDate: "12/17/2024",
-    id: "1",
-  },
-  { courseName: "Rapture-Palooza", courseDate: "7/31/2024", id: "1" },
-  { courseName: "Ponterosa", courseDate: "12/13/2023", id: "1" },
-  {
-    courseName: "George Lopez: America's Mexican",
-    courseDate: "3/18/2025",
-    id: "1",
-  },
-  { courseName: "Bride Came C.O.D., The", courseDate: "11/17/2023", id: "1" },
-  {
-    courseName: "Nostalgia for the Light (Nostalgia de la luz)",
-    courseDate: "12/21/2024",
-    id: "1",
-  },
-  {
-    courseName: "Water Lilies (Naissance des pieuvres)",
-    courseDate: "7/6/2024",
-    id: "1",
-  },
-  {
-    courseName: "One Nite In Mongkok (Wong gok hak yau)",
-    courseDate: "12/14/2023",
-    id: "1",
-  },
-  { courseName: "Monsieur Verdoux", courseDate: "2/7/2025", id: "1" },
-  { courseName: "Bears", courseDate: "8/28/2023", id: "1" },
-  { courseName: "My Dear Secretary", courseDate: "3/24/2025", id: "1" },
-  { courseName: "Body Snatchers", courseDate: "3/2/2025", id: "1" },
-  { courseName: "Gnomeo & Juliet", courseDate: "8/7/2023", id: "1" },
-  { courseName: "Grateful Dawg", courseDate: "5/5/2025", id: "1" },
-  { courseName: "Love, Rosie", courseDate: "11/2/2023", id: "1" },
-  {
-    courseName: "Woman Next Door, The (Femme d'à côté, La)",
-    courseDate: "5/8/2023",
-    id: "1",
-  },
-  { courseName: "Joan of Arc", courseDate: "4/12/2024", id: "1" },
-  { courseName: "Orchestra Wives", courseDate: "5/20/2024", id: "1" },
-  {
-    courseName: "Agony and the Ecstasy of Phil Spector, The",
-    courseDate: "6/15/2024",
-    id: "1",
-  },
-  { courseName: "Deewaar", courseDate: "7/23/2023", id: "1" },
-  {
-    courseName: "Red Cliff Part II (Chi Bi Xia: Jue Zhan Tian Xia)",
-    courseDate: "1/17/2025",
-    id: "1",
-  },
-  { courseName: "Cookers", courseDate: "10/11/2023", id: "1" },
-];
+// Adding element
 
-const Devoir = [
-  { courseName: "Monsieur Verdoux", courseDate: "2/7/2025", id: "1" },
-  { courseName: "Bears", courseDate: "8/28/2023", id: "1" },
-  { courseName: "My Dear Secretary", courseDate: "3/24/2025", id: "1" },
-  { courseName: "Body Snatchers", courseDate: "3/2/2025", id: "1" },
-];
+function AddingElement({ params }) {
+  const { data: session } = useSession();
 
-const Epreuves = [];
+  const inputRef = useRef(null);
 
-const EvaluationContinue = [];
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
+  if (!session) return null;
+
+  if (!(session?.user.role === "teacher")) return null;
+
+  return (
+    <>
+      <div
+        className="relative flex justify-evenly 
+        items-center gap-3 py-4 sm:py-2 sm:w-[75%] w-[100%] min-h-[110px] rounded-xl overflow-hidden bg-white px-2"
+      >
+        <div className="absolute top-0 w-full h-[10px] left-0 sm:h-full sm:w-[10px] bg-primary"></div>
+        <div className="flex flex-row items-center gap-4 p-2 sm:pl-[1.5%] rounded-full bg-bgfakeWhite h-[50px] w-[60%] sm:w-[75%] sm:min-w-[220px] sm:max-w-[650px] sm:h-[70px] sm:ml-[25px]">
+          <Avatar
+            src={session?.user.pfp}
+            size="large"
+            fallback
+            className="hidden sm:flex w-[45px] h-[45px] min-w-[45px] sm:w-[55px] sm:h-[55px] sm:min-w-[55px]"
+          />
+          <input
+            id="addEventInput"
+            className=" text-center sm:text-left font-poppins font-[500] bg-transparent outline-none flex-1 min-w-[100px]"
+            type="text"
+            placeholder="Add Course ..."
+            ref={inputRef}
+          />
+        </div>
+        <Button
+          className="cursor-pointer h-[50px] sm:h-[55px] sm:w-36 w-32 gap-3 flex justify-center items-center font-poppins text-white font-[400] bg-primary rounded-[40px] text-medium"
+          startContent={<Plus />}
+          onClick={onOpen}
+        >
+          Add
+        </Button>
+      </div>
+      <Modal
+        isOpen={isOpen}
+        onClose={onClose}
+        placement="center"
+        className="m-2"
+      >
+        <AddForm title={inputRef?.current?.value ?? ""} params={params} />
+      </Modal>
+    </>
+  );
+}
+
+function AddForm({ title = "", params }) {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm();
+  const submitButtonRef = useRef(null);
+  const onCloseRef = useRef(null);
+
+  const types = ["Cours", "Devoir", "Epreuves", "Evaluation Continue"];
+
+  const [file, setFile] = useState(null);
+  const [type, setType] = useState(null);
+
+  const { dataMapping, setDataMapping } = useContext(FetchingContext);
+
+  const onSubmit = async (data) => {
+    if (!file || !type) return;
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("name", data.name);
+    formData.append("type", types[Number(type)]);
+
+    const response = await fetch(
+      `/api/classes/${params.grade}/${params.classId}/${params.moduleId}/add`,
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
+
+    const result = await response.json();
+    if (response.ok) {
+      const newData = {
+        ...dataMapping,
+        [result.course.type]: [
+          ...dataMapping[result.course.type],
+          result.course,
+        ],
+      };
+      setDataMapping(newData);
+      onCloseRef.current();
+    } else {
+      console.log("Failed to add course");
+    }
+  };
+
+  return (
+    <ModalContent>
+      {(onClose) => {
+        onCloseRef.current = onClose;
+        return (
+          <>
+            <ModalHeader className="flex flex-col gap-1">Add Event</ModalHeader>
+            <ModalBody>
+              <form
+                className="flex flex-col gap-3 items-center"
+                onSubmit={handleSubmit(onSubmit)}
+              >
+                <FileUploader
+                  handleChange={(e) => setFile(e)}
+                  name="Course File"
+                  maxSize={100}
+                />
+                <Input
+                  label="Title"
+                  variant="bordered"
+                  defaultValue={title}
+                  {...register("name", {
+                    validate: (value) => {
+                      if (value.length >= 2) return true;
+                      return "Must be at least 2 characters long";
+                    },
+                  })}
+                  isInvalid={!!errors.name}
+                  errorMessage={errors?.name?.message ?? ""}
+                />
+                <Select
+                  label="Type"
+                  placeholder="Select a type"
+                  onChange={(e) => setType(e.target.value)}
+                >
+                  {types.map((type, index) => (
+                    <SelectItem key={index} value={type}>
+                      {type}
+                    </SelectItem>
+                  ))}
+                </Select>
+                <button
+                  ref={submitButtonRef}
+                  className="hidden"
+                  type="submit"
+                ></button>
+              </form>
+            </ModalBody>
+            <ModalFooter>
+              <Button color="danger" variant="flat" onPress={onClose}>
+                Close
+              </Button>
+              <Button
+                color="primary"
+                onPress={() => submitButtonRef.current.click()}
+                isLoading={isSubmitting}
+              >
+                Submit
+              </Button>
+            </ModalFooter>
+          </>
+        );
+      }}
+    </ModalContent>
+  );
+}
+
+const SkeletonAclass = () => {
+  return (
+    <main className="flex min-h-screen flex-col items-center w-full">
+      <SkeletonModulePage />
+    </main>
+  );
+};
+
+const SkeletonModulePage = () => {
+  return (
+    <div className="flex flex-col w-full gap-5 sm:gap-9 gap-x-0 sm:gap-x-8">
+      <div className="flex flex-col gap-5 sm:gap-9 items-center">
+        <div className="w-[95%] sm:w-[75%] rounded-xl">
+          <SkeletonSelectComp />
+          <SkeletonListHeader />
+          <div className="bg-white px-8 py-5 flex flex-col gap-[30px] rounded-b-xl h-[70vh] overflow-y-scroll">
+            {[1, 2, 3, 4, 5, 6].map((_, index) => (
+              <SkeletonAttachment key={index} />
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const SkeletonAttachment = () => {
+  return (
+    <div className="flex gap-3 animate-pulse">
+      <div className="bg-gray-400 rounded-full w-[50px] h-[50px] p-2"></div>
+      <div className="flex flex-col">
+        <div className="bg-gray-300 h-[18px] w-[150px] mb-2 rounded-lg"></div>
+        <div className="bg-gray-200 h-[14px] w-[100px] rounded-lg"></div>
+      </div>
+    </div>
+  );
+};
+
+const SkeletonListHeader = () => {
+  return (
+    <div className="bg-white border-b-[3px] rounded-t-xl px-[26px] text-[18px] font-[600] text-black">
+      <div className="hidden sm:flex sm:justify-between sm:items-center h-[75px]">
+        {["Cours", "Devoir", "Epreuves", "Evaluation Continue"].map(
+          (type, index) => (
+            <div
+              key={index}
+              className="bg-gray-300 h-[20px] w-[100px] rounded-xl"
+            ></div>
+          )
+        )}
+      </div>
+    </div>
+  );
+};
+
+const SkeletonSelectComp = () => {
+  return (
+    <div className="sm:hidden">
+      <div className="bg-gray-300 h-12 w-full rounded-lg mb-5"></div>
+    </div>
+  );
+};

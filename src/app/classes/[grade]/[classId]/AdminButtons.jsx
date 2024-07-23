@@ -13,7 +13,7 @@ export default function AdminButtons({ params }) {
     }
   }, [session]);
 
-  if (!session) return <p>loading</p>;
+  if (!session) return null;
 
   if (!(user.role === "admin")) return null;
 
