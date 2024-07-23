@@ -6,6 +6,7 @@ import NavBar from "./components/layout/navbar/NavBar";
 import Header from "./components/layout/header/Header";
 
 import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const poppins = Poppins({ subsets: ["latin"], weight: ["400", "700"] });
 
@@ -25,6 +26,7 @@ export default function RootLayout({ children }) {
               <Header />
               {children}
               <Analytics />
+              <SpeedInsights />
             </div>
           </div>
         </AuthProvider>
