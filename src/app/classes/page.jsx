@@ -1,6 +1,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import GradesList from "./Grades";
+import TeacherClasses from "./TeacherClasses";
 import { redirect } from "next/navigation";
 
 export default async function Classes() {
@@ -20,6 +21,10 @@ export default async function Classes() {
         </h1>
       </main>
     );
+  }
+
+  if (user.role === "teacher") {
+    return <TeacherClasses user={user} />;
   }
 
   return (

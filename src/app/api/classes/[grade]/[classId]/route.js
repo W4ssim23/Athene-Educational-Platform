@@ -66,6 +66,7 @@ export async function GET(req, { params }) {
           ...module.toObject(),
           teacher: `${teacher.firstName} ${teacher.lastName}`,
           teacherPfp: teacher.pfp,
+          teacherId: teacher._id,
           id: module._id,
         };
       })

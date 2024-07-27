@@ -3,9 +3,12 @@
 import AdminButtons from "./AdminButtons";
 import { useState, useEffect, useContext } from "react";
 import FetchingContext from "@/app/context";
+import { useSession } from "next-auth/react";
 
 export default function Aclass({ params }) {
   const { grade, classId } = params;
+
+  const { data: session } = useSession();
 
   const [loading, setLoading] = useState(true);
   const { modules, setModules } = useContext(FetchingContext);
@@ -19,8 +22,17 @@ export default function Aclass({ params }) {
         });
         if (response.ok) {
           const data = await response.json();
-          // console.log(data.modules);
-          setModules(data.modules);
+          // console.log(session?.user.role);
+          if (session?.user.role === "teacher") {
+            const filteredModules = data.modules.filter(
+              (module) => module.teacherId === session.user.id
+            );
+            setModules(filteredModules);
+          } else if (session) {
+            setModules(data.modules);
+          } else {
+            setModules([]);
+          }
         } else {
           console.log("Failed to fetch modules");
           setModules([]);
@@ -34,9 +46,9 @@ export default function Aclass({ params }) {
     };
 
     fetchClasses();
-  }, [grade, classId]);
+  }, [grade, classId, session]);
 
-  if (loading) return <SkeletonModuleList />;
+  if (loading || !session) return <SkeletonModuleList />;
 
   return (
     <main className=" min-h-screen w-full flex flex-col gap-8 ">
@@ -51,6 +63,7 @@ import Devoir from "./icons/Devoir";
 import Courses from "./icons/Courses";
 import SmallButton from "@/app/components/ui/SmallButton";
 import Link from "next/link";
+import { set } from "mongoose";
 
 const Module = ({ module, params }) => {
   return (
