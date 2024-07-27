@@ -138,7 +138,11 @@ export default function App() {
               <TableRow key={student.id}>
                 <TableCell>
                   <div className="flex items-center justify-start gap-2 ">
-                    <Avatar fallback src={student.pfp} className=" md:hidden" />
+                    <Avatar
+                      fallback
+                      src={student.pfp}
+                      className=" md:hidden min-w-[40px] min-h-[40px]"
+                    />
                     <p className="w-full text-center">
                       {getKeyValue(student, "firstName") +
                         " " +
