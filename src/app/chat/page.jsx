@@ -2,7 +2,11 @@
 import Chatt from "./components/Chat";
 
 export default function Chat() {
-  return <h1 className="text-4xl font-bold text-blue-700">Soon ...</h1>;
+  return (
+    <h1 className="text-4xl font-bold text-blue-700 w-full min-h-screen text-center pt-24">
+      Soon ...
+    </h1>
+  );
   return (
     // <main className="flex min-h-screen  flex-col items-center justify-between pt-24">
     //   <h1 className="text-4xl font-bold">Chat page</h1>

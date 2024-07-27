@@ -72,7 +72,7 @@ const ListHeader = ({ attchType, setAttchType }) => {
             key={type}
             onClick={() => setAttchType(type.replace(/\s/g, ""))}
             className={
-              attchType === type
+              attchType === type.replace(/\s/g, "")
                 ? "text-primary before:absolute before:h-[5px] before:w-full before:bottom-[-25px] before:left-0 transition-all ease-in-out before:bg-primary relative"
                 : hoverAnimation
             }
@@ -96,9 +96,15 @@ const SelectComp = ({ attchType, setAttchType }) => {
 
   return (
     <select
-      value={attchType}
-      onChange={(e) => setAttchType(e.target.value.replace(/\s/g, ""))}
-      className="sm:hidden placeholder:text-textgray text-primary  border-none text-[20px] font-kumbhfont font-[700] rounded-lg mb-5 outline-none w-full h-12 text-center"
+      value={attachmentTypes.find(
+        (type) => type.replace(/\s/g, "") === attchType
+      )}
+      onChange={(e) => {
+        const selectedType = e.target.value.replace(/\s/g, "");
+        setAttchType(selectedType);
+        console.log(selectedType);
+      }}
+      className="sm:hidden placeholder:text-textgray text-primary border-none text-[20px] font-kumbhfont font-[700] rounded-lg mb-5 outline-none w-full h-12 text-center"
     >
       {attachmentTypes.map((type) => (
         <option key={type} value={type}>

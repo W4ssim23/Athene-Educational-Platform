@@ -19,6 +19,7 @@ export async function POST(req) {
       grade,
       classs,
       gender,
+      classId,
     } = await req.json();
 
     const session = await getServerSession(authOptions);
@@ -40,7 +41,8 @@ export async function POST(req) {
       !email ||
       !grade ||
       !classs ||
-      !gender
+      !gender ||
+      !classId
     ) {
       return NextResponse.json(
         { message: "All fields are required." },
@@ -83,7 +85,7 @@ export async function POST(req) {
       address,
       phone,
       grade,
-      //   classId,
+      classId,
       gender: gender === "$.1" ? "female" : "male", //will fix it from the frontend later
       className: classs,
       password: hashedPassword,

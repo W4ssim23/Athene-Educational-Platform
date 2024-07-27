@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { Avatar } from "@nextui-org/react";
+import { Avatar, Spinner } from "@nextui-org/react";
 import { useSession } from "next-auth/react";
 import Attached from "../Attached";
 import { Send, dots, excel, pdf, file } from "@/assets";
@@ -50,13 +50,62 @@ export default function Course({ params }) {
 
   return (
     <main className="min-h-screen w-full ">
-      <AttachmentPage course={course} user={user} />
+      <AttachmentPage initCourse={course} user={user} params={params} />
     </main>
   );
 }
 
-const AttachmentPage = ({ course, user }) => {
+const AttachmentPage = ({ initCourse, user, params }) => {
   const [show, setShow] = useState(false);
+  const [course, setCourse] = useState(initCourse);
+  const [comment, setComment] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleCommentChange = (e) => {
+    setComment(e.target.value);
+  };
+
+  const handleSubmitComment = async () => {
+    if (comment.trim() === "") return;
+    setSubmitting(true);
+
+    console.log("Submitting comment:", comment);
+
+    try {
+      const response = await fetch(
+        `/api/classes/${params.grade}/${params.classId}/${params.moduleId}/${params.courseId}/comment`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ comment: comment }),
+        }
+      );
+
+      if (response.ok) {
+        setCourse((prev) => ({
+          ...prev,
+          comments: [
+            ...prev.comments,
+            {
+              studentName: user.firstName + " " + user.lastName,
+              studentPfp: user.pfp,
+              comment: comment,
+            },
+          ],
+        }));
+        setComment("");
+      } else {
+        console.log("Failed to submit comment");
+        // console.log(await response.json());
+      }
+    } catch (error) {
+      console.error("Failed to submit comment:", error);
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
     <div className="font-poppins m-[15px] h-[105vh] sm:m-[30px] flex flex-col gap-5 sm:gap-9">
@@ -122,10 +171,19 @@ const AttachmentPage = ({ course, user }) => {
                   type="text"
                   id="addEventInput"
                   className="text-center sm:text-left font-poppins font-[500] bg-transparent outline-none flex-1 w-full"
+                  value={comment}
+                  onChange={handleCommentChange}
                 />
               </div>
-              <div className="cursor-pointer">
-                <Image className="w-[25px] h-[25px]" src={Send} alt="" />
+              <div
+                className="cursor-pointer"
+                onClick={handleSubmitComment}
+                disabled={submitting}
+              >
+                {submitting && <Spinner />}
+                {!submitting && (
+                  <Image className="w-[25px] h-[25px]" src={Send} alt="" />
+                )}
               </div>
             </div>
           )}

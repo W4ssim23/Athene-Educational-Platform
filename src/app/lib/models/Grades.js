@@ -4,7 +4,7 @@ const commentSchema = new Schema({
   student: {
     name: { type: String, required: true },
     pfp: { type: String, required: true },
-    id: { type: Number, required: true },
+    id: { type: String, required: true },
   },
   comment: { type: String, required: true },
 });

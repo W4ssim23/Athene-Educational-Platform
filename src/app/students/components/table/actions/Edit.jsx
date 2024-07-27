@@ -11,20 +11,26 @@ import {
   SelectItem,
 } from "@nextui-org/react";
 import { useForm } from "react-hook-form";
-import { useRef, useState, useContext } from "react";
+import { useRef, useState, useContext, useEffect } from "react";
 import { filterEmptyValues } from "@/lib";
 import FetchingContext from "@/app/context";
 
 //toast message
 
 export default function AddForm({ student }) {
-  const grades = ["lycee", "cem", "prm"];
-  //will fetch classes based on the selected grade this is temporary
-  const classes = ["1S1", "2m2", "1p1"];
-  const [selectedGrade, setSelectedGrade] = useState("");
-  const [selectedClass, setSelectedClass] = useState("");
-  //   const [classes, setClasses] = useState([]);
-  //   const [loading, setLoading] = useState(false);
+  const grades = ["lycee", "cem", "primaire"];
+
+  const [gradesClasses, setGradesClasses] = useState({
+    cem: [],
+    lycee: [],
+    primaire: [],
+  });
+  const [classes, setClasses] = useState([]);
+  const [classesLoading, setClassesLoading] = useState(false);
+  const [selectedGrade, setSelectedGrade] = useState(null);
+  const [gradeError, setGradeError] = useState(null);
+  const [selectedClass, setSelectedClass] = useState(null);
+  const [classError, setClassError] = useState(null);
 
   const { students, setStudents } = useContext(FetchingContext);
 
@@ -36,19 +42,56 @@ export default function AddForm({ student }) {
   const submitButtonRef = useRef(null);
   const onCloseRef = useRef(null);
 
+  useEffect(() => {
+    const fetchClasses = async () => {
+      setClassesLoading(true);
+      try {
+        const response = await fetch("/api/classes", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          console.log("Failed to fetch classes");
+          return;
+        }
+
+        const data = await response.json();
+        setGradesClasses({
+          cem: data.classes.cem || [],
+          lycee: data.classes.lycee || [],
+          primaire: data.classes.primaire || [],
+        });
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setClassesLoading(false);
+      }
+    };
+
+    fetchClasses();
+  }, []);
+
   const onSubmit = async (data) => {
+    const sendData = data;
     // Filter out empty values
-    if (data.grade === student.grade) {
-      data.grade = undefined;
+    if (selectedGrade && selectedGrade !== student.grade) {
+      sendData.grade = selectedGrade;
     }
-    if (data.class === student.class) {
-      data.class = undefined;
+    if (selectedClass && selectedClass !== student.className) {
+      sendData.className = selectedClass;
+      const selectedClassObj = classes.find(
+        (classs) => classs.name === selectedClass
+      );
+      sendData.classId = selectedClassObj.id;
     }
-    if (data.gender.toLowerCase() === student.gender.toLowerCase()) {
-      data.gender = undefined;
+    if (sendData.gender.toLowerCase() === student.gender.toLowerCase()) {
+      sendData.gender = undefined;
     }
 
-    const filteredData = filterEmptyValues(data);
+    const filteredData = filterEmptyValues(sendData);
 
     if (Object.keys(filterEmptyValues(data)).length === 0) {
       onCloseRef.current();
@@ -68,9 +111,6 @@ export default function AddForm({ student }) {
 
       const result = await response.json();
       if (response.ok) {
-        // console.log("Student updated successfully:", result);
-        // console.log("filtered data:", filteredData);
-        // console.log("data:", student);
         // Update the student in the students list
         const updatedStudents = students.map((s) =>
           s.id === student.id ? { ...s, ...filteredData } : s
@@ -198,16 +238,17 @@ export default function AddForm({ student }) {
                 <Select
                   label="Grades"
                   placeholder="Select a Grade"
-                  defaultSelectedKeys={[student.grade ?? ""]}
+                  // defaultSelectedKeys={[student.grade ?? ""]}
                   variant="bordered"
-                  {...register("grade", {
-                    validate: (value) => {
-                      if (value.length === 0) return "Grade is required";
-                      return true;
-                    },
-                  })}
-                  isInvalid={!!errors.grade}
-                  errorMessage={errors?.grade?.message ?? ""}
+                  isLoading={classesLoading}
+                  onChange={(e) => {
+                    if (e.target.value === selectedGrade) return;
+                    setSelectedGrade(e.target.value);
+                    setClasses(gradesClasses[e.target.value]);
+                    setGradeError(null);
+                  }}
+                  isInvalid={!!gradeError}
+                  errorMessage={gradeError ?? ""}
                 >
                   {grades.map((grade) => (
                     <SelectItem key={grade} value={grade}>
@@ -218,20 +259,20 @@ export default function AddForm({ student }) {
                 <Select
                   label="Class"
                   placeholder="Select a Class"
-                  defaultSelectedKeys={[student.className ?? ""]}
+                  // defaultSelectedKeys={[student.className ?? ""]}
                   variant="bordered"
-                  {...register("className", {
-                    validate: (value) => {
-                      if (value.length === 0) return "Class is required";
-                      return true;
-                    },
-                  })}
-                  isInvalid={!!errors.className}
-                  errorMessage={errors?.className?.message ?? ""}
+                  isLoading={classesLoading}
+                  onChange={(e) => {
+                    if (e.target.value === selectedClass) return;
+                    setSelectedClass(e.target.value);
+                    setClassError(null);
+                  }}
+                  isInvalid={!!classError}
+                  errorMessage={classError ?? ""}
                 >
-                  {classes.map((aclass) => (
-                    <SelectItem key={aclass} value={aclass}>
-                      {aclass}
+                  {(classes || []).map((aclass) => (
+                    <SelectItem key={aclass.name} value={aclass.name}>
+                      {aclass.name}
                     </SelectItem>
                   ))}
                 </Select>

@@ -27,7 +27,7 @@ export async function GET(req) {
       phone: "0000000000",
       address: "annaba ....",
       className: "1S1",
-      grade: "lycee/cem/prm",
+      grade: "lycee/cem/primaire",
       parentName: "prenom de parent",
     };
 

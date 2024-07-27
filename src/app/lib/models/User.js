@@ -48,13 +48,9 @@ const userSchema = new Schema(
     },
     email: {
       type: String,
-      // match: /^\S+@\S+\.\S+$/,
-      // Optional email validation pattern
     },
     phone: {
       type: String,
-      // match: /^\d{10,15}$/,
-      // Optional phone number validation pattern
     },
     address: {
       type: String,
@@ -68,8 +64,7 @@ const userSchema = new Schema(
       type: String,
     },
     classId: {
-      type: Schema.Types.ObjectId,
-      ref: "Class",
+      type: String,
     },
     grade: {
       type: String,

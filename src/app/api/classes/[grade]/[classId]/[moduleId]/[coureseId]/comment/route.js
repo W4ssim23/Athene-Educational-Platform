@@ -9,7 +9,7 @@ export async function POST(req, { params }) {
     const session = await getServerSession(authOptions);
     const { user } = session;
 
-    if (!user || user.role === "student") {
+    if (!user || user.role !== "student") {
       return NextResponse.json(
         { message: "You are not authorized to perform this action." },
         { status: 401 }
@@ -18,10 +18,18 @@ export async function POST(req, { params }) {
 
     await connectMongoDB();
 
-    const { grade, classId, moduleId, courseId } = params;
+    const { grade, classId, moduleId, coureseId } = params;
     const { comment } = await req.json();
 
-    if (!grade || !classId || !moduleId || !courseId || !comment) {
+    console.log("Comment data:", {
+      grade,
+      classId,
+      moduleId,
+      coureseId,
+      comment,
+    });
+
+    if (!grade || !classId || !moduleId || !coureseId || !comment) {
       return NextResponse.json(
         { message: "Not enough data provided!" },
         { status: 400 }
@@ -46,41 +54,6 @@ export async function POST(req, { params }) {
         );
     }
 
-    const classData = await ClassModel.findOne(
-      { "classes._id": classId },
-      { "classes.$": 1 }
-    );
-
-    if (!classData) {
-      return NextResponse.json(
-        { message: "Class not found!" },
-        { status: 404 }
-      );
-    }
-
-    const cls = classData.classes[0];
-    const mod = cls.modules.find(
-      (module) => module._id.toString() === moduleId
-    );
-
-    if (!mod) {
-      return NextResponse.json(
-        { message: "Module not found!" },
-        { status: 404 }
-      );
-    }
-
-    const course = mod.courses.find(
-      (course) => course._id.toString() === courseId
-    );
-
-    if (!course) {
-      return NextResponse.json(
-        { message: "Course not found!" },
-        { status: 404 }
-      );
-    }
-
     const newComment = {
       student: {
         name: user.firstName + " " + user.lastName,
@@ -90,8 +63,33 @@ export async function POST(req, { params }) {
       comment: comment,
     };
 
-    course.comments.push(newComment);
-    await classData.save();
+    const updateResult = await ClassModel.updateOne(
+      {
+        "classes._id": classId,
+        "classes.modules._id": moduleId,
+        "classes.modules.courses._id": coureseId,
+      },
+      {
+        $push: {
+          "classes.$[class].modules.$[module].courses.$[course].comments":
+            newComment,
+        },
+      },
+      {
+        arrayFilters: [
+          { "class._id": classId },
+          { "module._id": moduleId },
+          { "course._id": coureseId },
+        ],
+      }
+    );
+
+    if (updateResult.nModified === 0) {
+      return NextResponse.json(
+        { message: "Failed to add comment!" },
+        { status: 500 }
+      );
+    }
 
     return NextResponse.json(
       { message: "Comment added successfully!" },

@@ -16,6 +16,8 @@ import Action from "./actions/Action";
 import MultiDelete from "./MultiDelete";
 import PhoneIcon from "./PhoneIcon";
 
+// Needs to be fixed (sorting by name and by classes )
+
 export default function App() {
   const { students, setStudents } = useContext(FetchingContext);
   const [sortDescriptor, setSortDescriptor] = useState({
@@ -64,8 +66,8 @@ export default function App() {
   }, [students]);
 
   const handleSortChange = (columnKey) => {
+    let direction = "ascending";
     setSortDescriptor((prevSortDescriptor) => {
-      let direction = "ascending";
       if (
         prevSortDescriptor.column === columnKey &&
         prevSortDescriptor.direction === "ascending"
@@ -135,11 +137,13 @@ export default function App() {
             {items.map((student, index) => (
               <TableRow key={student.id}>
                 <TableCell>
-                  <div className="flex items-center justify-start gap-2">
+                  <div className="flex items-center justify-start gap-2 ">
                     <Avatar fallback src={student.pfp} className=" md:hidden" />
-                    {getKeyValue(student, "firstName") +
-                      " " +
-                      getKeyValue(student, "lastName")}
+                    <p className="w-full text-center">
+                      {getKeyValue(student, "firstName") +
+                        " " +
+                        getKeyValue(student, "lastName")}
+                    </p>
                   </div>
                 </TableCell>
                 <TableCell className="hidden md:table-cell">

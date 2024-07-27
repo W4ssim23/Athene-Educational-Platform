@@ -3,11 +3,14 @@
 import { useEffect, useState, useContext } from "react";
 import GradeList from "./GradeList";
 import FetchingContext from "@/app/context";
+import { useSession } from "next-auth/react";
 
 export default function Grades({ params }) {
   const { grade } = params;
   const { classes, setClasses } = useContext(FetchingContext);
   const [loading, setLoading] = useState(true);
+
+  const { data: session } = useSession();
 
   //should have a display when the list is ampty
 
@@ -40,6 +43,15 @@ export default function Grades({ params }) {
   }, [classes]);
 
   if (loading) return <GradesSkeleton />;
+
+  if (!session || !(session.user.role === "admin"))
+    return (
+      <main className="w-full min-h-[80vh] flex flex-col items-center justify-center">
+        <h1 className="text-3xl font-bold text-primary">
+          You are not authorized to perform this action.
+        </h1>
+      </main>
+    );
 
   return (
     <main className="flex min-h-screen flex-col gap-8">

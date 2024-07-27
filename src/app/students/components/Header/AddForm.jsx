@@ -11,17 +11,24 @@ import {
   SelectItem,
 } from "@nextui-org/react";
 import { useForm } from "react-hook-form";
-import { useRef, useState, useContext } from "react";
+import { useRef, useState, useContext, useEffect } from "react";
 import FetchingContext from "@/app/context";
 
 //toast message
 
 export default function AddForm() {
-  const grades = ["lycee", "cem", "prm"];
-  // Will fetch classes based on the selected grade this is temporary
-  const classes = ["1S1", "2m2", "1p1"];
-  const [selectedGrade, setSelectedGrade] = useState("");
-  const [selectedClass, setSelectedClass] = useState("");
+  const grades = ["lycee", "cem", "primaire"];
+  const [gradesClasses, setGradesClasses] = useState({
+    cem: [],
+    lycee: [],
+    primaire: [],
+  });
+  const [classes, setClasses] = useState([]);
+  const [classesLoading, setClassesLoading] = useState(false);
+  const [selectedGrade, setSelectedGrade] = useState(null);
+  const [gradeError, setGradeError] = useState(null);
+  const [selectedClass, setSelectedClass] = useState(null);
+  const [classError, setClassError] = useState(null);
 
   const { students, setStudents } = useContext(FetchingContext);
 
@@ -33,9 +40,57 @@ export default function AddForm() {
   const submitButtonRef = useRef(null);
   const onCloseRef = useRef(null);
 
+  useEffect(() => {
+    const fetchClasses = async () => {
+      setClassesLoading(true);
+      try {
+        const response = await fetch("/api/classes", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          console.log("Failed to fetch classes");
+          return;
+        }
+
+        const data = await response.json();
+        setGradesClasses({
+          cem: data.classes.cem || [],
+          lycee: data.classes.lycee || [],
+          primaire: data.classes.primaire || [],
+        });
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setClassesLoading(false);
+      }
+    };
+
+    fetchClasses();
+  }, []);
+
   const onSubmit = async (data) => {
-    // console.log("Submission !");
-    // console.log(data);
+    if (!selectedGrade) {
+      setGradeError("Grade is required");
+      return;
+    }
+
+    if (!selectedClass) {
+      setClassError("Class is required");
+      return;
+    }
+
+    const selectedClassObj = classes.find(
+      (classs) => classs.name === selectedClass
+    );
+
+    if (!selectedClassObj) {
+      setClassError("Selected class not found");
+      return;
+    }
 
     try {
       const response = await fetch("/api/students/addone", {
@@ -43,14 +98,16 @@ export default function AddForm() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify({
+          ...data,
+          grade: selectedGrade,
+          classs: selectedClass,
+          classId: selectedClassObj.id,
+        }),
       });
-
-      // console.log("request sent");
 
       if (response.ok) {
         const result = await response.json();
-        // console.log("Student registered successfully:", result);
         setStudents([...students, result.student]);
         onCloseRef.current();
       } else {
@@ -74,19 +131,16 @@ export default function AddForm() {
             <ModalBody>
               <form
                 className="flex flex-col gap-3 items-center"
-                onSubmit={handleSubmit(async (data) => {
-                  await onSubmit(data);
-                })}
+                onSubmit={handleSubmit(onSubmit)}
               >
                 <div className="w-full sm:flex sm:gap-4">
                   <Input
                     label="First Name"
                     variant="bordered"
                     {...register("firstName", {
-                      validate: (value) => {
-                        if (value.length >= 2) return true;
-                        return "Must be at least 2 characters long";
-                      },
+                      validate: (value) =>
+                        value.length >= 2 ||
+                        "Must be at least 2 characters long",
                     })}
                     isInvalid={!!errors.firstName}
                     errorMessage={errors?.firstName?.message ?? ""}
@@ -96,10 +150,9 @@ export default function AddForm() {
                     label="Last Name"
                     variant="bordered"
                     {...register("lastName", {
-                      validate: (value) => {
-                        if (value.length >= 2) return true;
-                        return "Must be at least 2 characters long";
-                      },
+                      validate: (value) =>
+                        value.length >= 2 ||
+                        "Must be at least 2 characters long",
                     })}
                     isInvalid={!!errors.lastName}
                     errorMessage={errors?.lastName?.message ?? ""}
@@ -110,10 +163,9 @@ export default function AddForm() {
                     label="Parent Name"
                     variant="bordered"
                     {...register("parentName", {
-                      validate: (value) => {
-                        if (value.length >= 2) return true;
-                        return "Must be at least 2 characters long";
-                      },
+                      validate: (value) =>
+                        value.length >= 2 ||
+                        "Must be at least 2 characters long",
                     })}
                     isInvalid={!!errors.parentName}
                     errorMessage={errors?.parentName?.message ?? ""}
@@ -123,10 +175,9 @@ export default function AddForm() {
                     label="Address"
                     variant="bordered"
                     {...register("address", {
-                      validate: (value) => {
-                        if (value.length >= 2) return true;
-                        return "Must be at least 2 characters long";
-                      },
+                      validate: (value) =>
+                        value.length >= 2 ||
+                        "Must be at least 2 characters long",
                     })}
                     isInvalid={!!errors.address}
                     errorMessage={errors?.address?.message ?? ""}
@@ -167,14 +218,15 @@ export default function AddForm() {
                   label="Grades"
                   placeholder="Select a Grade"
                   variant="bordered"
-                  {...register("grade", {
-                    validate: (value) => {
-                      if (value.length === 0) return "Grade is required";
-                      return true;
-                    },
-                  })}
-                  isInvalid={!!errors.grade}
-                  errorMessage={errors?.grade?.message ?? ""}
+                  isLoading={classesLoading}
+                  onChange={(e) => {
+                    if (e.target.value === selectedGrade) return;
+                    setSelectedGrade(e.target.value);
+                    setClasses(gradesClasses[e.target.value]);
+                    setGradeError(null);
+                  }}
+                  isInvalid={!!gradeError}
+                  errorMessage={gradeError ?? ""}
                 >
                   {grades.map((grade) => (
                     <SelectItem key={grade} value={grade}>
@@ -186,18 +238,18 @@ export default function AddForm() {
                   label="Class"
                   placeholder="Select a Class"
                   variant="bordered"
-                  {...register("classs", {
-                    validate: (value) => {
-                      if (value.length === 0) return "Class is required";
-                      return true;
-                    },
-                  })}
-                  isInvalid={!!errors.classs}
-                  errorMessage={errors?.classs?.message ?? ""}
+                  isLoading={classesLoading}
+                  onChange={(e) => {
+                    if (e.target.value === selectedClass) return;
+                    setSelectedClass(e.target.value);
+                    setClassError(null);
+                  }}
+                  isInvalid={!!classError}
+                  errorMessage={classError ?? ""}
                 >
-                  {classes.map((aclass) => (
-                    <SelectItem key={aclass} value={aclass}>
-                      {aclass}
+                  {(classes || []).map((aclass) => (
+                    <SelectItem key={aclass.name} value={aclass.name}>
+                      {aclass.name}
                     </SelectItem>
                   ))}
                 </Select>
@@ -206,10 +258,8 @@ export default function AddForm() {
                   placeholder="Select a Gender"
                   variant="bordered"
                   {...register("gender", {
-                    validate: (value) => {
-                      if (value.length === 0) return "Gender is required";
-                      return true;
-                    },
+                    validate: (value) =>
+                      value.length > 0 || "Gender is required",
                   })}
                   isInvalid={!!errors.gender}
                   errorMessage={errors?.gender?.message ?? ""}

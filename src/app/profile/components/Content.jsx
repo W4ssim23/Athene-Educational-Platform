@@ -18,7 +18,7 @@ const Content = () => {
 
   useEffect(() => {
     if (session) {
-      // console.log("Session: ", session);
+      // console.log("User: ", session.user);
       setUser(session.user);
     }
   }, [session]);
@@ -44,13 +44,11 @@ const Content = () => {
           {user.role === "teacher" && (
             <p className="font-poppins text-[#A098AE]">
               {/* {userData.module + " Teacher"} */}
-              {"A Teacher"}
+              {"Teacher"}
             </p>
           )}
           {user.role === "student" && (
-            <p className="font-poppins text-[#A098AE]">
-              {user.grade + " Student"}
-            </p>
+            <p className="font-poppins text-[#A098AE]">{"Student"}</p>
           )}
           {user.role === "admin" && (
             <p className="font-poppins text-[#A098AE]">Admin</p>
@@ -67,7 +65,6 @@ const Content = () => {
           />
         </span>
       </div>
-
       <div className="flex flex-col items-start">
         <div className="flex flex-col m-1 ml-3 mb-3">
           {user?.parentName && (
@@ -113,41 +110,12 @@ const Content = () => {
             </p>
           </div>
         </div>
-
-        {user.role != "student" && (
-          <div className="m-1 ml-4 flex flex-col gap-3">
-            <h3 className=" text-[#303972] font-bold text-lg ">About :</h3>
-            <p className="font-poppins text-[#303972] text-base min-h-[80px] max-w-[615px]">
-              {user.about}
-            </p>
-          </div>
-        )}
-
-        {user.classes && (
-          <div className="m-2 ml-3">
-            <div className="flex m-1 my-2 items-center">
-              <SmallButton
-                picture={<ClassW />}
-                bg={"#4CBC9E"}
-                size={buttonSizes}
-              />
-              <p className={`text-[#303972] text-base m-1 ml-3 font-bold`}>
-                {"Classes :"}
-              </p>
-            </div>
-            <div className="flex flex-wrap gap-6 ml-4  sm:w-[600px]">
-              {user?.classes?.map((name, indx) => {
-                return (
-                  <ClassBox
-                    key={indx}
-                    tClassName={name}
-                    style="w-[85px] sm:h-[47px] h-[52px]  text-white text-center rounded-[14px] shadow-md text-[20px] font-[500] uppercase py-3 cursor-pointer"
-                  />
-                );
-              })}
-            </div>
-          </div>
-        )}
+        <div className="m-1 ml-4 flex flex-col gap-3">
+          <h3 className=" text-[#303972] font-bold text-lg ">About :</h3>
+          <p className="font-poppins text-[#303972] text-base min-h-[80px] max-w-[615px]">
+            {user.about}
+          </p>
+        </div>
       </div>
     </div>
   );

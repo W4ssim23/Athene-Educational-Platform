@@ -71,8 +71,13 @@ export const authOptions = {
         token.address = user.address;
         token.phone = user.phone;
         token.isAdmin = user.isAdmin;
-        token.classes = ["1s1", "1m1", "1p1"];
         token.about = user.about;
+        if (user.classId) {
+          token.classId = user.classId;
+        }
+        if (user.grade) {
+          token.grade = user.grade;
+        }
         //inserting other ifs later
       }
       return token;
@@ -88,8 +93,13 @@ export const authOptions = {
         session.user.address = token.address;
         session.user.phone = token.phone;
         session.user.isAdmin = token.isAdmin;
-        session.user.classes = token.classes;
         session.user.about = token.about;
+        if (token.classId) {
+          session.user.classId = token.classId;
+        }
+        if (token.grade) {
+          session.user.grade = token.grade;
+        }
       }
       return session;
     },

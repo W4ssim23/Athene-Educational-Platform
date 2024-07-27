@@ -5,6 +5,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import bcrypt from "bcrypt";
 import CryptoJS from "crypto-js";
+import { Lycee, Cem, Primaire } from "@/app/lib/models/Grades";
 
 export async function POST(req) {
   const encryptionKey = process.env.INCRYPT_SECRET;
@@ -53,7 +54,10 @@ export async function POST(req) {
         );
       }
 
-      const username = `${firstName[0]}_${lastName}${phone.slice(-4)}`;
+      // Ensure phone is a string
+      const phoneStr = String(phone);
+
+      const username = `${firstName[0]}_${lastName}${phoneStr.slice(-4)}`;
       console.log("Generated username:", username);
 
       // Connect to MongoDB
@@ -68,6 +72,29 @@ export async function POST(req) {
           { status: 409 }
         );
       }
+
+      // Check for the class
+      let ClassModel;
+      if (grade === "lycee") {
+        ClassModel = Lycee;
+      } else if (grade === "cem") {
+        ClassModel = Cem;
+      } else if (grade === "prm") {
+        ClassModel = Primaire;
+      }
+
+      const classData = await ClassModel.findOne({
+        "classes.name": className.toLowerCase(),
+      });
+
+      if (!classData) {
+        return NextResponse.json(
+          { message: `Class ${className} not found.` },
+          { status: 404 }
+        );
+      }
+
+      const classId = classData._id;
 
       const password = Math.random().toString(36).slice(-8);
       console.log("Generated password", password);
@@ -86,10 +113,11 @@ export async function POST(req) {
         parentName,
         email,
         address,
-        phone,
+        phone: phoneStr,
         grade,
         gender,
         className: className,
+        classId: classId,
         password: hashedPassword,
         bahbah: encryptedPassword,
         role: "student",
@@ -106,13 +134,14 @@ export async function POST(req) {
         phone: newUser.phone,
         grade: newUser.grade,
         className: newUser.className,
+        classId: newUser.classId,
         parentName: newUser.parentName,
         address: newUser.address,
         pfp: newUser.pfp,
         gender: newUser.gender,
       };
 
-      //adding to new students
+      // Adding to new students
       addedStudents.push(newStudent);
     }
 

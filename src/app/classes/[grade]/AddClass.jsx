@@ -13,8 +13,11 @@ import {
 } from "@nextui-org/react";
 import { useState, useRef, useContext } from "react";
 import FetchingContext from "@/app/context";
+import { useSession } from "next-auth/react";
 
 export default function Add({ grade }) {
+  const { data: session } = useSession();
+  console.log("Session:", session);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [selectedYear, setSelectedYear] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -57,6 +60,8 @@ export default function Add({ grade }) {
       console.error("Add class error:", error);
     }
   };
+
+  if (!session || session.user.role !== "admin") return null;
 
   return (
     <div className="flex flex-col items-end">
