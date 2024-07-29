@@ -163,16 +163,17 @@ const AttachmentPage = ({ initCourse, user, params }) => {
           {user.role === "student" && (
             <div className="relative flex px-4 justify-start items-center gap-3 py-4 sm:py-2 max-w-[550px] w-[95%] h-[65px] sm:w-[75%] rounded-full bg-[#F3F4FF]">
               <div>
-                <Avatar src={user.pfp} className="w-[48px] h-[48px]" />
+                <Avatar fallback src={user.pfp} className="w-[48px] h-[48px]" />
               </div>
               <div className="flex-1">
                 <input
                   placeholder="Add Comment"
                   type="text"
                   id="addEventInput"
-                  className="text-center sm:text-left font-poppins font-[500] bg-transparent outline-none flex-1 w-full"
+                  className="text-left font-poppins font-[500] bg-transparent outline-none flex-1 w-full"
                   value={comment}
                   onChange={handleCommentChange}
+                  autoComplete="off"
                 />
               </div>
               <div

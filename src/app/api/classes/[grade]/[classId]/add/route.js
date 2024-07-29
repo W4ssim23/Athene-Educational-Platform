@@ -4,6 +4,8 @@ import { Lycee, Cem, Primaire } from "@/app/lib/models/Grades";
 import User from "@/app/lib/models/User";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import admin from "firebase-admin";
+import { initAdmin } from "@/lib/firebase/firebaseAdmin";
 
 export async function POST(req, { params }) {
   try {
@@ -18,6 +20,7 @@ export async function POST(req, { params }) {
     }
 
     await connectMongoDB();
+    await initAdmin(); // Initialize Firebase Admin
 
     const { grade, classId } = params;
 
@@ -29,7 +32,6 @@ export async function POST(req, { params }) {
     }
 
     const data = await req.json();
-
     const { name, teacherId } = data;
 
     if (!name || !teacherId) {
@@ -85,6 +87,26 @@ export async function POST(req, { params }) {
     teacher.classes.push(cls.name);
     await teacher.save();
 
+    // Create a new collection on Firebase
+    const firestore = admin.firestore();
+    const collectionName = `${name}-${cls.name}-chat`
+      .toLowerCase()
+      .replace(/\s/g, "");
+    const collectionRef = firestore.collection(collectionName);
+
+    const newDoc = await collectionRef.add({
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      message: "Welcome to the chat!",
+      senderId: "system",
+      senderName: "System",
+      senderPfp:
+        "https://res.cloudinary.com/djimnth7u/image/upload/v1722203431/cfnmljdp3qeksnltuydz.png",
+    });
+
+    // Assign the collection name (or id) to the module
+    addedModule.chatId = collectionName; // might change to newDoc.id
+    await classData.save();
+
     return NextResponse.json(
       {
         message: "Module added successfully!",
@@ -93,6 +115,7 @@ export async function POST(req, { params }) {
           name: addedModule.name,
           teacher: `${teacher.firstName} ${teacher.lastName}`,
           teacherPfp: teacher.pfp,
+          chatId: addedModule.chatId,
         },
       },
       { status: 201 }

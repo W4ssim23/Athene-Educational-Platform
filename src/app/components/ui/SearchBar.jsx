@@ -8,7 +8,7 @@ import FetchingContext from "@/app/context";
 import { usePathname } from "next/navigation";
 
 const SearchBar = () => {
-  const { setStudents, setTeachers } = useContext(FetchingContext);
+  const { setStudents, setTeachers, setRooms } = useContext(FetchingContext);
   const pathname = usePathname();
 
   const handleSearch = useDebouncedCallback(
@@ -28,7 +28,7 @@ const SearchBar = () => {
           setStudents(data.students);
         }
         //else a toast message will be shown
-      } else {
+      } else if (pathname === "teachers") {
         const response = await fetch(`/api/teachers?search=${e.target.value}`, {
           method: "GET",
           headers: {
@@ -39,6 +39,18 @@ const SearchBar = () => {
           const data = await response.json();
           // console.log("data:", data.teachers);
           setTeachers(data.teachers);
+        }
+      } else {
+        const response = await fetch(`/api/chat?search=${e.target.value}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        if (response.ok) {
+          const data = await response.json();
+          // console.log("data:", data);
+          setRooms(data.rooms);
         }
       }
     },

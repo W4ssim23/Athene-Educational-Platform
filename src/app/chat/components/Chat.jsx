@@ -1,13 +1,20 @@
-import Inbox from "./Inbox";
-import Messages from "./Messages";
+import { NoStudent } from "@/assets";
+import Image from "next/image";
+
 const Chat = () => {
   return (
-    <div className="font-poppins h-[80vh] sm:mb-0 mb-[30px]  flex flex-col gap-5 sm:gap-9">
-      <div className="relative flex rounded-xl bg-white justify-center overflow-hidden select-none gap-0 h-screen ">
-        <Inbox />
-        <div className="flex-1">
-          <Messages />
-        </div>
+    <div className="flex flex-col items-center justify-center w-full h-full gap-5 ">
+      <Image
+        className="w-[200px] sm:w-[400px] pt-[40%] sm:pt-16"
+        // width={"450px"}
+        src={NoStudent}
+        alt=""
+        priority
+      />
+      <div className="flex flex-col items-center *:font-kumbhfont *:text-headcolor">
+        <p className=" text-center text-[33px] font-[600]">
+          Select a chat room
+        </p>
       </div>
     </div>
   );
