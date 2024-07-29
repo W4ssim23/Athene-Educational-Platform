@@ -27,6 +27,7 @@ const moduleSchema = new Schema({
   chatId: { type: String },
   teacherId: { type: String, required: true },
   courses: [courseSchema],
+  program: { type: String },
 });
 
 const studentSchema = new Schema({

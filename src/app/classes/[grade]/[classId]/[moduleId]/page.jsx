@@ -155,6 +155,7 @@ const ModulePage = ({ params }) => {
 
   return (
     <div className="flex flex-col w-full gap-5 sm:gap-9 gap-x-0 sm:gap-x-8">
+      <AnnualProgram params={params} />
       <div className="flex flex-col gap-5 sm:gap-9 items-center">
         <AddingElement params={params} />
         <div className="w-[95%] sm:w-[75%] rounded-xl">
@@ -319,6 +320,176 @@ function AddForm({ title = "", params }) {
                     </SelectItem>
                   ))}
                 </Select>
+                <button
+                  ref={submitButtonRef}
+                  className="hidden"
+                  type="submit"
+                ></button>
+              </form>
+            </ModalBody>
+            <ModalFooter>
+              <Button color="danger" variant="flat" onPress={onClose}>
+                Close
+              </Button>
+              <Button
+                color="primary"
+                onPress={() => submitButtonRef.current.click()}
+                isLoading={isSubmitting}
+              >
+                Submit
+              </Button>
+            </ModalFooter>
+          </>
+        );
+      }}
+    </ModalContent>
+  );
+}
+
+const AnnualProgram = ({ params }) => {
+  const { data: session } = useSession();
+
+  if (!session) return null;
+
+  if (session.user.role === "admin")
+    return (
+      <div className="w-full sm:w-[88%] flex justify-between">
+        <div className="w-full flex items-end justify-end">
+          <AddProgram params={params} />
+        </div>
+      </div>
+    );
+
+  //direct link to the program
+  return (
+    <div className="w-full sm:w-[88%] flex justify-between">
+      <div className="w-full flex items-end justify-end">
+        <ProgramGetter params={params} />
+      </div>
+    </div>
+  );
+};
+
+function ProgramGetter({ params }) {
+  const [programLink, setProgramLink] = useState("");
+
+  useEffect(() => {
+    const fetchProgramLink = async () => {
+      try {
+        const response = await fetch(
+          `/api/classes/${params.grade}/${params.classId}/${params.moduleId}/program`
+        );
+        const data = await response.json();
+        if (response.ok) {
+          setProgramLink(data.programLink);
+        } else {
+          console.error("Failed to fetch program link:", data.message);
+        }
+      } catch (error) {
+        console.error("Error fetching program link:", error);
+      }
+    };
+
+    fetchProgramLink();
+  }, [params]);
+
+  if (!programLink) return null;
+
+  return (
+    <Link href={programLink}>
+      <div className="">
+        <Button className="cursor-pointer h-[50px] sm:w-36 w-32 gap-3 flex justify-center items-center font-poppins text-white font-[400] bg-primary rounded-[40px] text-medium">
+          Program
+        </Button>
+      </div>
+    </Link>
+  );
+}
+
+function AddProgram({ params }) {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
+  return (
+    <>
+      <div className="">
+        <Button
+          className="cursor-pointer h-[50px] sm:h-[55px] sm:w-36 w-32 gap-3 flex justify-center items-center font-poppins text-white font-[400] bg-primary rounded-[40px] text-medium"
+          startContent={<Plus />}
+          onClick={onOpen}
+        >
+          Program
+        </Button>
+      </div>
+      <Modal
+        isOpen={isOpen}
+        onClose={onClose}
+        placement="center"
+        className="m-2"
+      >
+        <AddingProgramForm params={params} />
+      </Modal>
+    </>
+  );
+}
+
+function AddingProgramForm({ params }) {
+  const submitButtonRef = useRef(null);
+  const onCloseRef = useRef(null);
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [file, setFile] = useState(null);
+
+  const onSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!file) return;
+
+    try {
+      setIsSubmitting(true);
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const response = await fetch(
+        `/api/classes/${params.grade}/${params.classId}/${params.moduleId}/addprogram`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      const result = await response.json();
+      if (response.ok) {
+        // console.log(result);
+        onCloseRef.current();
+      } else {
+        console.log("Failed to add program");
+      }
+    } catch {
+      console.log("Failed to add program");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <ModalContent>
+      {(onClose) => {
+        onCloseRef.current = onClose;
+        return (
+          <>
+            <ModalHeader className="flex flex-col gap-1">
+              Add Program
+            </ModalHeader>
+            <ModalBody>
+              <form
+                className="flex flex-col gap-3 items-center"
+                onSubmit={onSubmit}
+              >
+                <FileUploader
+                  handleChange={(e) => setFile(e)}
+                  name="Program File"
+                  maxSize={25}
+                />
                 <button
                   ref={submitButtonRef}
                   className="hidden"
