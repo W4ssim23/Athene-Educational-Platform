@@ -43,7 +43,11 @@ export async function GET(req) {
                 mod.name.toLowerCase().includes(search.toLowerCase())
               ) {
                 rooms.push(`${cls.name.toUpperCase()} :  ${mod.name}`);
-                roomsId.push(`${mod.name}-${cls.name}-chat`.replace(/\s/g, ""));
+                roomsId.push(
+                  `${mod.name}-${cls.name}-chat`
+                    .replace(/\s/g, "")
+                    .toLowerCase()
+                );
               }
             });
           });
@@ -75,7 +79,9 @@ export async function GET(req) {
                 ) {
                   rooms.push(`${cls.name.toUpperCase()} :  ${mod.name}`);
                   roomsId.push(
-                    `${mod.name}-${cls.name}-chat`.replace(/\s/g, "")
+                    `${mod.name}-${cls.name}-chat`
+                      .replace(/\s/g, "")
+                      .toLowerCase()
                   );
                 }
               }
@@ -111,7 +117,9 @@ export async function GET(req) {
             mod.name.toLowerCase().includes(search.toLowerCase())
           ) {
             rooms.push(`${cls.name.toUpperCase()} :  ${mod.name}`);
-            roomsId.push(`${mod.name}-${cls.name}-chat`.replace(/\s/g, ""));
+            roomsId.push(
+              `${mod.name}-${cls.name}-chat`.replace(/\s/g, "").toLowerCase()
+            );
           }
         });
       }
