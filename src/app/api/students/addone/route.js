@@ -5,6 +5,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import bcrypt from "bcrypt";
 import CryptoJS from "crypto-js";
+// import { Lycee, Cem, Primaire } from "@/app/lib/models/Grades";
 
 export async function POST(req) {
   const encryptionKey = process.env.INCRYPT_SECRET;
@@ -111,6 +112,28 @@ export async function POST(req) {
       pfp: newUser.pfp,
       gender: newUser.gender,
     };
+
+    // const classStudent = {
+    //   id: newUser._id,
+    //   name: newUser.firstName + " " + newUser.lastName,
+    //   pfp: "",
+    // };
+
+    // // Update the class with the new student
+    // const ClassModel =
+    //   grade === "lycee" ? Lycee : grade === "cem" ? Cem : Primaire;
+    // const classDoc = await ClassModel.findOneAndUpdate(
+    //   { "classes._id": classId },
+    //   { $push: { "classes.$.students": classStudent } },
+    //   { new: true }
+    // );
+
+    // if (!classDoc) {
+    //   return NextResponse.json(
+    //     { message: "Class not found." },
+    //     { status: 404 }
+    //   );
+    // }
 
     return NextResponse.json(
       { message: "Student registered successfully.", student: newStudent },

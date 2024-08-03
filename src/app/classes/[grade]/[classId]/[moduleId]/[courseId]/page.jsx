@@ -6,6 +6,7 @@ import { Avatar, Spinner } from "@nextui-org/react";
 import { useSession } from "next-auth/react";
 import Attached from "../Attached";
 import { Send, dots, excel, pdf, file } from "@/assets";
+import Link from "next/link";
 
 export default function Course({ params }) {
   const { data: session } = useSession();
@@ -132,7 +133,12 @@ const AttachmentPage = ({ initCourse, user, params }) => {
             </div>
           )}
         </div>
-        <a href={course.courseLink} target="_blank" rel="noopener noreferrer">
+        <Link
+          href={course.courseLink}
+          passHref
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           <div className="p-5 flex justify-start items-center w-full border-b-[1.5px]">
             <div className="w-[90%] max-w-[500px] h-fit rounded-md border border-[#DEDEDE] flex mb-[10px]">
               <Image
@@ -155,7 +161,7 @@ const AttachmentPage = ({ initCourse, user, params }) => {
             </div>
             <br />
           </div>
-        </a>
+        </Link>
         <div className="flex gap-5 flex-col">
           <p className="font-[600] text-[#A7A7A7] text-[18px] sm:text-[23px] opacity-80">
             Comments Added to the Course

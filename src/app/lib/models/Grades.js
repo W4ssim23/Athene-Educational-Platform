@@ -33,7 +33,7 @@ const moduleSchema = new Schema({
 const studentSchema = new Schema({
   name: { type: String, required: true },
   pfp: { type: String, required: true },
-  id: { type: Number, required: true },
+  id: { type: String, required: true },
 });
 
 const classSchema = new Schema({

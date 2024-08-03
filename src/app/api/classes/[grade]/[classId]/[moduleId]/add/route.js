@@ -57,15 +57,24 @@ export async function POST(req, { params }) {
       );
     }
 
-    const fileUrl = await handleFileUpload(file);
-    if (!fileUrl) {
-      return NextResponse.json(
-        { message: "Failed to upload file!" },
-        { status: 500 }
-      );
-    }
+    //if else lahna Evaluation Continue
 
-    const fileExtension = file.name.split(".").pop();
+    let fileUrl, fileExtension;
+
+    if (type === "Epreuves") {
+      fileUrl = file;
+      fileExtension = "link";
+    } else {
+      fileUrl = await handleFileUpload(file);
+      if (!fileUrl) {
+        return NextResponse.json(
+          { message: "Failed to upload file!" },
+          { status: 500 }
+        );
+      }
+
+      fileExtension = file.name.split(".").pop();
+    }
 
     const newCourse = {
       name,

@@ -244,10 +244,18 @@ function AddForm({ title = "", params }) {
   const { dataMapping, setDataMapping } = useContext(FetchingContext);
 
   const onSubmit = async (data) => {
-    if (!file || !type) return;
+    if (!type) return;
+
+    if (type === "2" && !data.link) return;
+
+    if (type !== "2" && !file) return;
 
     const formData = new FormData();
-    formData.append("file", file);
+    if (type !== "2") {
+      formData.append("file", file);
+    } else {
+      formData.append("file", data.link);
+    }
     formData.append("name", data.name);
     formData.append("type", types[Number(type)]);
 
@@ -291,11 +299,50 @@ function AddForm({ title = "", params }) {
                 className="flex flex-col gap-3 items-center"
                 onSubmit={handleSubmit(onSubmit)}
               >
-                <FileUploader
-                  handleChange={(e) => setFile(e)}
-                  name="Course File"
-                  maxSize={100}
-                />
+                {type !== "3" && type !== "2" && (
+                  <FileUploader
+                    handleChange={(e) => setFile(e)}
+                    name="Course File"
+                    maxSize={100}
+                  />
+                )}
+                {type === "3" && (
+                  <div className="flex flex-col gap-2">
+                    <FileUploader
+                      handleChange={(e) => setFile(e)}
+                      name="Course File"
+                      maxSize={100}
+                      types={["XLSX"]}
+                    />
+                    <ListGetter params={params} />
+                  </div>
+                )}
+                {type === "2" && (
+                  <Input
+                    label="Link"
+                    variant="bordered"
+                    {...register("link", {
+                      validate: (value) => {
+                        // Regular expression for URL validation
+                        const urlPattern = new RegExp(
+                          "^(https?:\\/\\/)?" + // protocol
+                            "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" + // domain name
+                            "((\\d{1,3}\\.){3}\\d{1,3}))" + // OR ip (v4) address
+                            "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" + // port and path
+                            "(\\?[;&a-z\\d%_.~+=-]*)?" + // query string
+                            "(\\#[-a-z\\d_]*)?$",
+                          "i" // fragment locator
+                        );
+                        if (urlPattern.test(value)) {
+                          return true;
+                        }
+                        return "Invalid URL format";
+                      },
+                    })}
+                    isInvalid={!!errors.link}
+                    errorMessage={errors?.link?.message ?? ""}
+                  />
+                )}
                 <Input
                   label="Title"
                   variant="bordered"
@@ -515,6 +562,18 @@ function AddingProgramForm({ params }) {
     </ModalContent>
   );
 }
+
+const ListGetter = ({ params }) => {
+  return (
+    <div className="w-full flex flex-xol items-center justify-center">
+      <Link
+        href={`/api/classes/${params.grade}/${params.classId}/${params.moduleId}/evaluationcontinue`}
+      >
+        <p className="text-primary cursor-pointer">Get Students List?</p>
+      </Link>
+    </div>
+  );
+};
 
 const SkeletonAclass = () => {
   return (
