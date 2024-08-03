@@ -1,36 +1,89 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Educational Platform
 
-## Getting Started
+An alternative to Google Classroom, this full stack Next.js project offers comprehensive features for school management. The platform allows admins to manage teachers, students, classes, modules, and courses. It features a user-friendly interface for both PC and mobile views, live chat rooms for each module, and multi-role authentication.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- Admin management of teachers, students, classes, and modules
+- Course management with various types
+- Responsive UI for both PC and mobile
+- Live chat rooms for each module
+- Multi-role authentication
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Upcoming Features
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+- Video calls
+- WPA (Web Progressive App)
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+## Installation
 
-## Learn More
+To run this project locally, follow these steps:
 
-To learn more about Next.js, take a look at the following resources:
+### Prerequisites
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Node.js
+- MongoDB
+- Firebase account
+- Cloudinary account
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+### Steps
 
-## Deploy on Vercel
+1. **Clone the repository:**
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+    ```sh
+    git clone https://github.com/yourusername/educational-platform.git
+    cd educational-platform
+    ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+2. **Install dependencies:**
+
+    ```sh
+    npm install
+    ```
+
+3. **Set up environment variables:**
+
+    Create a `.env.local` file in the root directory and include the following variables:
+
+    ```sh
+    NEXTAUTH_SECRET=your_nextauth_secret
+    INCRYPT_SECRET=your_incrypt_secret
+    MONGODB_URI=your_mongodb_uri
+    NEXTAUTH_URL=your_nextauth_url
+    CLOUDINARY_IMG_API=your_cloudinary_img_api
+    CLOUDINARY_FILE_API=your_cloudinary_file_api
+    NEXT_PUBLIC_FIREBASE_CONFIG=your_firebase_config
+    NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_firebase_project_id
+    NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_firebase_storage_bucket
+    FIREBASE_PRIVATE_KEY=your_firebase_private_key
+    FIREBASE_CLIENT_EMAIL=your_firebase_client_email
+    ```
+
+4. **Run the development server:**
+
+    ```sh
+    npm run dev
+    ```
+
+    Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+## License
+
+This project is licensed under the [GNU General Public License v3.0](https://choosealicense.com/licenses/gpl-3.0/). This means you are free to use, modify, and distribute the code as long as your work remains open source.
+
+## Contributing
+
+Contributions are welcome! Please fork the repository and use a feature branch. Pull requests are warmly welcome.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/fooBar`)
+3. Commit your changes (`git commit -am 'Add some fooBar'`)
+4. Push to the branch (`git push origin feature/fooBar`)
+5. Create a new Pull Request
+
+## Contact
+
+For any questions, feel free to reach out to me:
+
+- Email: [o_zouiten@estin.dz](mailto:o_zouiten@estin.dz)
+
