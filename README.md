@@ -1,4 +1,4 @@
-# Educational Platform
+# Athenee Educational Platform
 
 An alternative to Google Classroom, this full stack Next.js project offers comprehensive features for school management. The platform allows admins to manage teachers, students, classes, modules, and courses. It features a user-friendly interface for both PC and mobile views, live chat rooms for each module, and multi-role authentication.
 
