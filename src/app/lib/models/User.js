@@ -68,7 +68,7 @@ const userSchema = new Schema(
     },
     grade: {
       type: String,
-      enum: ["cem", "lycee", "prm"],
+      enum: ["cem", "lycee", "primaire"],
     },
     parentName: {
       type: String,

@@ -91,7 +91,7 @@ export default function View({ data }) {
 
 function GradeBox({ tClassName = "" }) {
   const color =
-    tClassName.toLowerCase() === "prm"
+    tClassName.toLowerCase() === "primaire"
       ? "#FCC43E"
       : tClassName.toLowerCase() === "cem"
       ? "#FB7D5B"

@@ -33,6 +33,17 @@ An alternative to Google Classroom, this full stack Next.js project offers compr
 ![PC View](src/assets/images/Screenshot%202024-08-03%20190325.png)
 ![PC View](src/assets/images/Screenshot%202024-08-03%20190407.png)
 
+### Mobile View
+
+![Mobile View](src/assets/images/Screenshot%202024-08-10%20151356.png)
+![Mobile View](src/assets/images/Screenshot%202024-08-10%20151412.png)
+![Mobile View](src/assets/images/Screenshot%202024-08-10%20151443.png)
+![Mobile View](src/assets/images/Screenshot%202024-08-10%20151518.png)
+![Mobile View](src/assets/images/Screenshot%202024-08-10%20151604.png)
+![Mobile View](src/assets/images/Screenshot%202024-08-10%20151643.png)
+![Mobile View](src/assets/images/Screenshot%202024-08-10%20151703.png)
+![Mobile View](src/assets/images/Screenshot%202024-08-10%20151731.png)
+
 ## Installation
 
 To run this project locally, follow these steps:
@@ -103,4 +114,8 @@ Contributions are welcome! Please fork the repository and use a feature branch. 
 
 For any questions, feel free to reach out to me:
 
+[@W4ssim23](https://github.com/W4ssim23)
+
 - Email: [o_zouiten@estin.dz](mailto:o_zouiten@estin.dz)
+
+Design by: [@yasserbachta](https://github.com/yasserbachta/)

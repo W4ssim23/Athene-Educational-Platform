@@ -117,7 +117,7 @@ export default function EditForm({ event }) {
                 ...e,
                 ...filteredData,
                 start: formatTime(eventStart),
-                end: formatTime(eventEnd),
+                ...(eventEnd && { end: formatTime(eventEnd) }),
               }
             : e
         );

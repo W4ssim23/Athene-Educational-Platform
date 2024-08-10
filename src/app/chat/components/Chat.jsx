@@ -3,7 +3,7 @@ import Image from "next/image";
 
 const Chat = () => {
   return (
-    <div className="flex flex-col items-center justify-center w-full h-full gap-5 ">
+    <div className=" hidden sm:flex flex-col items-center justify-center w-full h-full gap-5 ">
       <Image
         className="w-[200px] sm:w-[400px] pt-[40%] sm:pt-16"
         // width={"450px"}

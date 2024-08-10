@@ -200,7 +200,7 @@ const classNames = {
 
 function GradeBox({ tClassName = "" }) {
   const color =
-    tClassName.toLowerCase() === "prm"
+    tClassName.toLowerCase() === "primaire"
       ? "#FCC43E"
       : tClassName.toLowerCase() === "cem"
       ? "#FB7D5B"
@@ -208,6 +208,7 @@ function GradeBox({ tClassName = "" }) {
   const boxStyles = {
     backgroundColor: color,
   };
+  const display = tClassName.toLowerCase() === "primaire" ? "prm" : tClassName;
   return (
     <div
       className={
@@ -215,7 +216,7 @@ function GradeBox({ tClassName = "" }) {
       }
       style={boxStyles}
     >
-      {tClassName && ` ${tClassName.toUpperCase()}`}
+      {tClassName && ` ${display.toUpperCase()}`}
     </div>
   );
 }

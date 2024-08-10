@@ -18,6 +18,7 @@ import DotsIcon from "@/app/students/components/table/actions/DotsIcon";
 import { Send } from "@/assets";
 import Image from "next/image";
 import { Avatar, Spinner } from "@nextui-org/react";
+import BackButton from "../components/BackButton";
 
 import { useRef, useState, useEffect } from "react";
 
@@ -72,6 +73,7 @@ export default function Chat({ params }) {
 const Head = ({ title, pfp }) => {
   return (
     <div className="flex items-center gap-3 px-6 py-7 w-full shadow-sm rounded-sm">
+      <BackButton />
       {/* pfp instead */}
       <Avatar fallback src={pfp} size="md" className="w-[45px] h-[45px]" />
       <p className="text-[#303972] text-[19px] font-[600] flex-1">{title}</p>
@@ -130,17 +132,17 @@ const Msg = ({ messages, currentUserId, dummy }) => {
 
 const Received = ({ msg, last = false, pfp, name }) => {
   return (
-    <div className="w-fit max-w-[200px] sm:max-w-[300px] flex flex-col gap-0">
+    <div className="w-fit max-w-[300px]  flex flex-col gap-0">
       <p className="pl-[60px] text-gray-500 text-[13px]">{name}</p>
-      <div className="w-fit max-w-[200px] sm:max-w-[300px] flex gap-2 sm:gap-4 items-center">
+      <div className="w-fit max-w-[300px] flex gap-2 sm:gap-4">
         <Avatar
           fallback
           src={pfp}
           size="md"
-          className="min-w-[40px] min-h-[40px]"
+          className="min-w-[40px] min-h-[40px] mt-[4px]"
         />
         <div
-          className={`bg-[#F5F5F5] w-fit p-3 self-start ${
+          className={`bg-[#F5F5F5] w-fit max-w-[300px] p-3 self-start ${
             last ? "rounded-tl-xl rounded-r-xl" : "rounded-xl"
           } text-[#303972] text-wrap break-words`}
           style={{ wordBreak: "break-word", overflowWrap: "break-word" }}

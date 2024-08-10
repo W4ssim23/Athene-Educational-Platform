@@ -293,7 +293,9 @@ function AddForm({ title = "", params }) {
         onCloseRef.current = onClose;
         return (
           <>
-            <ModalHeader className="flex flex-col gap-1">Add Event</ModalHeader>
+            <ModalHeader className="flex flex-col gap-1">
+              Add Course
+            </ModalHeader>
             <ModalBody>
               <form
                 className="flex flex-col gap-3 items-center"
