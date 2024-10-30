@@ -60,7 +60,7 @@ To run this project locally, follow these steps:
 1. **Clone the repository:**
 
    ```sh
-   git clone https://github.com/yourusername/educational-platform.git
+   git clone https://github.com/w4ssim23/athene-educational-platform.git
    cd athene-educational-platform
    ```
 
