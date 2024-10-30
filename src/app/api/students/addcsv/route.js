@@ -25,7 +25,7 @@ export async function POST(req) {
     const addedStudents = [];
 
     for (const student of students) {
-      const {
+      let {
         firstName,
         lastName,
         parentName,
@@ -36,6 +36,18 @@ export async function POST(req) {
         className,
         gender,
       } = student;
+
+      if (!parentName) {
+        parentName = "Unknown";
+      }
+
+      if (!address) {
+        address = "Unknown";
+      }
+
+      if (!email) {
+        email = "mail@ath.dz";
+      }
 
       if (
         !firstName ||
@@ -58,7 +70,7 @@ export async function POST(req) {
       const phoneStr = String(phone);
 
       const username = `${firstName[0]}_${lastName}${phoneStr.slice(-4)}`;
-      console.log("Generated username:", username);
+      // console.log("Generated username:", username);
 
       // Connect to MongoDB
       await connectMongoDB();
@@ -75,17 +87,31 @@ export async function POST(req) {
 
       // Check for the class
       let ClassModel;
-      if (grade === "lycee") {
+      if (grade.toLowerCase() === "lycee") {
         ClassModel = Lycee;
-      } else if (grade === "cem") {
+      } else if (grade.toLowerCase() === "cem") {
         ClassModel = Cem;
-      } else if (grade === "prm") {
+      } else if (
+        grade.toLowerCase() === "prm" ||
+        grade.toLowerCase() === "primaire"
+      ) {
         ClassModel = Primaire;
       }
 
-      const classData = await ClassModel.findOne({
+      const levelData = await ClassModel.findOne({
         "classes.name": className.toLowerCase(),
       });
+
+      if (!levelData) {
+        return NextResponse.json(
+          { message: `Grade level with class ${className} not found.` },
+          { status: 404 }
+        );
+      }
+
+      const classData = levelData.classes.find(
+        (cls) => cls.name.toLowerCase() === className.toLowerCase()
+      );
 
       if (!classData) {
         return NextResponse.json(
@@ -97,7 +123,7 @@ export async function POST(req) {
       const classId = classData._id;
 
       const password = Math.random().toString(36).slice(-8);
-      console.log("Generated password", password);
+      // console.log("Generated password", password);
 
       // Hash password and create user
       const hashedPassword = await bcrypt.hash(password, 10);

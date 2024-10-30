@@ -104,6 +104,16 @@ const LoginForm = () => {
           </a>
         </div>
       </div>
+      <div className="flex items-center justify-center mt-4">
+        <a
+          href="https://web.facebook.com/wassim.zw2314"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-textgray1 text-center text-sm hover:underline"
+        >
+          made by zouitene ouassim
+        </a>
+      </div>
     </div>
   );
 };

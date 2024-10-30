@@ -25,6 +25,7 @@ const gradeConfig = {
   primaire: {
     color: "bg-[#FCC43E]",
     levels: {
+      0: { picture: P1, position: "h-full top-[15px] right-[-17px]" },
       1: { picture: P1, position: "h-full top-[15px] right-[-17px]" },
       2: { picture: P2, position: "h-full top-[15px] right-[-15px]" },
       3: { picture: P3, position: "h-4/5 top-[15px] right-[-18px]" },

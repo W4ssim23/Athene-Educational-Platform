@@ -17,7 +17,7 @@ import { useSession } from "next-auth/react";
 
 export default function Add({ grade }) {
   const { data: session } = useSession();
-  console.log("Session:", session);
+  // console.log("Session:", session);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [selectedYear, setSelectedYear] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -31,7 +31,7 @@ export default function Add({ grade }) {
       ? ["1", "2", "3"]
       : grade === "cem"
       ? ["1", "2", "3", "4"]
-      : ["1", "2", "3", "4", "5"];
+      : ["prepa", "1", "2", "3", "4", "5"];
 
   const handleSubmit = async () => {
     if (!selectedYear) return;
@@ -51,7 +51,13 @@ export default function Add({ grade }) {
       setLoading(false);
       if (res.ok) {
         const updatedClasses = [...classes];
-        updatedClasses[selectedYear.currentKey - 1].push(data.classs);
+        updatedClasses[
+          selectedYear.currentKey === "prepa"
+            ? 0
+            : grade === "primaire"
+            ? selectedYear.currentKey
+            : selectedYear.currentKey - 1
+        ].push(data.classs);
         setClasses(updatedClasses);
         onCloseRef.current();
       }

@@ -25,11 +25,11 @@ export default function Grades({ params }) {
           const data = await response.json();
           setClasses(data.classes);
         } else {
-          setClasses([[], [], [], [], []]);
+          setClasses([[], [], [], [], [], []]);
         }
       } catch (error) {
         console.error("Failed to fetch classes:", error);
-        setClasses([[], [], [], [], []]);
+        setClasses([[], [], [], [], [], []]);
       } finally {
         setLoading(false);
       }

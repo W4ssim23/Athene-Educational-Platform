@@ -6,6 +6,12 @@ import User from "@/app/lib/models/User";
 
 import * as XLSX from "xlsx";
 
+// this link will download fo the teacher an execl file with the names of the students and the latest
+// evaluation notes out of the 31 notes ,
+// guess i have to add the notes in the datbase to the module and then get them here
+// there would be parres of the student id and a list of its notes
+// the teacher can then fill the notes and upload the file again to update the notes
+
 export async function GET(req, { params }) {
   try {
     const session = await getServerSession(authOptions);

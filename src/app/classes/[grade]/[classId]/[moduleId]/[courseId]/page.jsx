@@ -5,8 +5,17 @@ import Image from "next/image";
 import { Avatar, Spinner } from "@nextui-org/react";
 import { useSession } from "next-auth/react";
 import Attached from "../Attached";
-import { Send, dots, excel, pdf, file } from "@/assets";
+import { Send, excel, pdf, file } from "@/assets";
 import Link from "next/link";
+import {
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+} from "@nextui-org/react";
+import { Modal, useDisclosure } from "@nextui-org/modal";
+import { Button } from "@nextui-org/react";
+import { useRef } from "react";
 
 export default function Course({ params }) {
   const { data: session } = useSession();
@@ -57,7 +66,6 @@ export default function Course({ params }) {
 }
 
 const AttachmentPage = ({ initCourse, user, params }) => {
-  const [show, setShow] = useState(false);
   const [course, setCourse] = useState(initCourse);
   const [comment, setComment] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -116,22 +124,7 @@ const AttachmentPage = ({ initCourse, user, params }) => {
       <div className="relative flex flex-col rounded-xl bg-white pt-5 gap-3 h-screen overflow-y-scroll px-4 sm:px-14 py-6">
         <div className="p-5 flex items-center justify-between select-none border-b-[1.5px]">
           <Attachment data={course} />
-          {user.role !== "student" && (
-            <div
-              className={`w-[25px] h-[25px] flex justify-center items-center transition ease-in-out cursor-pointer ${
-                show ? "translate-x-4" : ""
-              }`}
-              onClick={() => setShow(!show)}
-            >
-              <Image src={dots} alt="" />
-            </div>
-          )}
-          {show && (
-            <div className="absolute flex flex-row-reverse transition ease-out gap-3 right-[100px]">
-              {/* drop down */}
-              {/* elements of edit and delete to add */}
-            </div>
-          )}
+          <Deleting params={params} user={user} />
         </div>
         <Link
           href={course.courseLink}
@@ -298,3 +291,110 @@ const SkeletonAttachment = () => {
     </div>
   );
 };
+
+function Deleting({ params, user }) {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
+  if (user.role === "student") return null;
+
+  return (
+    <>
+      <div className="">
+        <Button
+          className="cursor-pointer h-[45px] max-w-[30px] gap-3 flex justify-center items-center font-poppins text-white font-[400] bg-red rounded-[40px] text-medium"
+          startContent={<DeleteIcon />}
+          onClick={onOpen}
+        ></Button>
+      </div>
+      <Modal
+        isOpen={isOpen}
+        onClose={onClose}
+        placement="center"
+        className="m-2"
+      >
+        <DeleteConfermation params={params} />
+      </Modal>
+    </>
+  );
+}
+
+function DeleteConfermation({ params }) {
+  const onCloseRef = useRef(null);
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const onDelete = async () => {
+    try {
+      setIsSubmitting(true);
+
+      const response = await fetch(
+        `/api/classes/${params.grade}/${params.classId}/${params.moduleId}/${params.courseId}/delete`,
+        {
+          method: "Delete",
+        }
+      );
+
+      const data = await response.json();
+      console.log(data);
+
+      if (response.ok) {
+        onCloseRef.current();
+        window.location.href = `/classes/${params.grade}/${params.classId}/${params.moduleId}`;
+      } else {
+        console.log("Failed to delete course");
+      }
+    } catch {
+      console.log("Failed to delete course");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <ModalContent>
+      {(onClose) => {
+        onCloseRef.current = onClose;
+        return (
+          <>
+            <ModalHeader className="flex flex-col gap-1">
+              Delete Course
+            </ModalHeader>
+            <ModalBody>
+              <h1 className="w-full h-full text-center text-red text-lg">
+                You sure you want to delete this course ?
+              </h1>
+            </ModalBody>
+            <ModalFooter className="flex items-center justify-center gap-8">
+              <Button variant="flat" onPress={onClose}>
+                Close
+              </Button>
+              <Button
+                color="danger"
+                onPress={onDelete}
+                isLoading={isSubmitting}
+              >
+                Confirm
+              </Button>
+            </ModalFooter>
+          </>
+        );
+      }}
+    </ModalContent>
+  );
+}
+
+function DeleteIcon() {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="27"
+      height="27"
+      viewBox="0 0 48 48"
+    >
+      <path
+        fill="white"
+        d="M20.5 4a1.5 1.5 0 00-1.434 2h-2.925a5.5 5.5 0 00-4.577 2.45L9.197 12H7.5a1.5 1.5 0 100 3h2.264a1.5 1.5 0 00.445 0H36.33l-1.572 14.68a1.5 1.5 0 102.982.318L39.348 15H40.5a1.5 1.5 0 100-3h-1.697l-2.367-3.55A5.505 5.505 0 0031.859 6h-2.925A1.5 1.5 0 0027.5 4h-7zm-4.36 5h15.72c.837 0 1.615.416 2.08 1.113L35.196 12H12.803l1.258-1.887a1.5 1.5 0 00.002-.002A2.489 2.489 0 0116.14 9zm-5.568 8.65a1.5 1.5 0 00-1.455 1.68l2.008 18.756A5.519 5.519 0 0016.594 43h14.81a5.519 5.519 0 005.469-4.914l.373-3.48a1.5 1.5 0 10-2.982-.319l-.373 3.479A2.483 2.483 0 0131.404 40h-14.81a2.48 2.48 0 01-2.485-2.234L12.1 19.012a1.5 1.5 0 00-1.527-1.362z"
+      ></path>
+    </svg>
+  );
+}

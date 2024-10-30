@@ -1,11 +1,10 @@
 import { NextResponse } from "next/server";
 import { connectMongoDB } from "@/app/lib/mongodb";
 import { Lycee, Cem, Primaire } from "@/app/lib/models/Grades";
-import User from "@/app/lib/models/User";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
-export async function GET(req, { params }) {
+export async function DELETE(req, { params }) {
   try {
     const session = await getServerSession(authOptions);
     const { user } = session;
@@ -19,11 +18,11 @@ export async function GET(req, { params }) {
 
     await connectMongoDB();
 
-    const { grade, classId } = params;
+    const { grade, classId, moduleId, coureseId } = params;
 
-    if (!grade || !classId) {
+    if (!grade || !classId || !moduleId || !coureseId) {
       return NextResponse.json(
-        { message: "Grade or classId not provided!" },
+        { message: "Not enough data provided!", provided: params },
         { status: 400 }
       );
     }
@@ -46,37 +45,32 @@ export async function GET(req, { params }) {
         );
     }
 
-    const classData = await ClassModel.findOne(
-      { "classes._id": classId },
-      { "classes.$": 1 }
+    // Use updateOne to remove the course from the module's courses array
+    const result = await ClassModel.updateOne(
+      { "classes._id": classId, "classes.modules._id": moduleId },
+      {
+        $pull: { "classes.$[cls].modules.$[mod].courses": { _id: coureseId } },
+      },
+      {
+        arrayFilters: [{ "cls._id": classId }, { "mod._id": moduleId }],
+      }
     );
 
-    if (!classData) {
+    if (result.modifiedCount === 0) {
       return NextResponse.json(
-        { message: "Class not found!" },
+        { message: "Course not found or already deleted!" },
         { status: 404 }
       );
     }
 
-    const cls = classData.classes[0];
-    const modules = await Promise.all(
-      cls.modules.map(async (module) => {
-        const teacher = await User.findById(module.teacherId);
-        return {
-          ...module.toObject(),
-          teacher: `${teacher?.firstName ?? ""} ${teacher?.lastName ?? ""}`,
-          teacherPfp: teacher?.pfp,
-          teacherId: teacher?._id,
-          id: module._id,
-        };
-      })
-    );
-
-    return NextResponse.json({ modules }, { status: 200 });
-  } catch (error) {
-    console.error("Fetch error:", error);
     return NextResponse.json(
-      { message: "An error occurred while fetching the modules." },
+      { message: "Course deleted successfully." },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Delete error:", error);
+    return NextResponse.json(
+      { message: "An error occurred while deleting the course." },
       { status: 500 }
     );
   }

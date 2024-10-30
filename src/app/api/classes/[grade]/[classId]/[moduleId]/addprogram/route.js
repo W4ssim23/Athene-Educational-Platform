@@ -101,7 +101,7 @@ async function handleFileUpload(blob) {
   const file = new File([blob], "ProgramFile", { type: blob.type });
   const formData = new FormData();
   formData.append("file", file);
-  formData.append("upload_preset", "vtxres570000");
+  formData.append("upload_preset", "axknggyv");
 
   try {
     const response = await fetch(process.env.CLOUDINARY_FILE_API, {

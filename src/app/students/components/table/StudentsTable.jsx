@@ -9,6 +9,7 @@ import {
   TableCell,
   getKeyValue,
   Avatar,
+  Button,
 } from "@nextui-org/react";
 import { useState, useContext, useEffect } from "react";
 import FetchingContext from "@/app/context";
@@ -28,14 +29,44 @@ export default function App() {
   const [items, setItems] = useState([]);
   const [selected, setSelected] = useState({});
 
+  const [page, setPage] = useState(1);
+  const [isFetching, setIsFetching] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+
+  const fetchMoreStudents = async () => {
+    if (isFetching || !hasMore || isLoading) return;
+
+    setIsFetching(true);
+
+    try {
+      const response = await fetch(`/api/students?page=${page}&limit=25`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
+
+      if (!response.ok) {
+        console.log("Failed to fetch more students");
+        return;
+      }
+
+      const data = await response.json();
+      setStudents((prev) => [...prev, ...data.students]);
+      setItems((prev) => [...prev, ...data.students]);
+      setHasMore(data.students.length > 0);
+      setPage((prevPage) => prevPage + 1);
+    } catch (error) {
+      console.error("Error fetching more students:", error);
+    } finally {
+      setIsFetching(false);
+    }
+  };
+
   const fetchStudents = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch("/api/students", {
+      const response = await fetch(`/api/students?page=1&limit=25`, {
         method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
       });
 
       if (!response.ok) {
@@ -47,6 +78,7 @@ export default function App() {
       const data = await response.json();
       setStudents(data.students);
       setItems(data.students);
+      setHasMore(data.students.length > 0);
     } catch (error) {
       console.error(error);
       setItems([]);
@@ -179,6 +211,9 @@ export default function App() {
           </TableBody>
         </Table>
       )}
+      {!isLoading && hasMore && (
+        <LoadMoreButton fetchMore={fetchMoreStudents} fetching={isFetching} />
+      )}
     </div>
   );
 }
@@ -242,6 +277,18 @@ function ClassBox({ tClassName = "", style }) {
     </div>
   );
 }
+
+const LoadMoreButton = ({ fetchMore, fetching = false }) => {
+  return (
+    <Button
+      className="bg-primary text-white p-2 rounded-md shadow-md"
+      isLoading={fetching}
+      onPress={fetchMore}
+    >
+      Load more
+    </Button>
+  );
+};
 
 const StudentsTableSkeleton = () => {
   return (

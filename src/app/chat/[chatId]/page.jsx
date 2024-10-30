@@ -198,6 +198,13 @@ const SendInput = ({ pfp, dummy, chatId, senderName, senderId }) => {
     }
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleSubmitMessage();
+    }
+  };
+
   return (
     <div className="relative flex px-4 justify-start items-center gap-3 py-4 sm:py-2  w-[98%] h-[65px]  rounded-full bg-[#F3F4FF] mt-auto mb-1 ml-2 ">
       <div>
@@ -211,6 +218,7 @@ const SendInput = ({ pfp, dummy, chatId, senderName, senderId }) => {
           className="text-left font-poppins font-[500] bg-transparent outline-none flex-1 w-full"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
+          onKeyDown={handleKeyDown}
           autoComplete="off"
         />
       </div>

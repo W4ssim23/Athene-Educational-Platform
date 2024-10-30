@@ -32,28 +32,9 @@ export default function AddCsv() {
 
   const validateStudentData = (students) => {
     return students.every((student) => {
-      const {
-        firstName,
-        lastName,
-        parentName,
-        address,
-        phone,
-        email,
-        grade,
-        className,
-        gender,
-      } = student;
-      return (
-        firstName &&
-        lastName &&
-        parentName &&
-        address &&
-        phone &&
-        email &&
-        grade &&
-        className &&
-        gender
-      );
+      const { firstName, lastName, phone, grade, className, gender } = student;
+
+      return firstName && lastName && phone && grade && className && gender;
     });
   };
 

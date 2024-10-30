@@ -70,6 +70,22 @@ export async function GET(req) {
     processClasses(cemClasses, "cem");
     processClasses(primaireClasses, "primaire");
 
+    // Function to remove duplicate classes by classId
+    const filterUniqueClasses = (classes) => {
+      const uniqueClasses = new Map();
+      classes.forEach((cls) => {
+        if (!uniqueClasses.has(cls.classId)) {
+          uniqueClasses.set(cls.classId, cls);
+        }
+      });
+      return Array.from(uniqueClasses.values());
+    };
+
+    // Filter duplicates for each grade
+    classesByGrade.lycee = filterUniqueClasses(classesByGrade.lycee);
+    classesByGrade.cem = filterUniqueClasses(classesByGrade.cem);
+    classesByGrade.primaire = filterUniqueClasses(classesByGrade.primaire);
+
     return NextResponse.json({ classes: classesByGrade }, { status: 200 });
   } catch (error) {
     console.error("Fetch error:", error);

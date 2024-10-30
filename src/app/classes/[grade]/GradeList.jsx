@@ -12,11 +12,24 @@ function GradeList({ grade, levels }) {
               lvl.length > 0 && (
                 <div className="flex flex-col gap-2" key={indx}>
                   <h1 className="text-[#303972] text-[27px] font-bold mb-4 ml-5">
-                    {String(indx + 1) +
+                    {String(
+                      grade === "primaire" ? (indx === 0 ? "" : indx) : indx + 1
+                    ) +
                       " " +
-                      (indx === 0 ? "ère" : "éme") +
+                      (grade === "primaire"
+                        ? indx === 1
+                          ? "ère"
+                          : indx === 0
+                          ? "Préparatoire"
+                          : "éme"
+                        : indx === 0
+                        ? "ère"
+                        : "éme") +
                       " " +
-                      "année" +
+                      (grade !== "primaire" ||
+                      (grade === "primaire" && indx !== 0)
+                        ? "année"
+                        : "") +
                       " " +
                       (grade.toLowerCase() == "cem"
                         ? "moyenne"

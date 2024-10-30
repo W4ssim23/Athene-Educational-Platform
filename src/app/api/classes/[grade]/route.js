@@ -46,19 +46,31 @@ export async function GET(req, { params }) {
     }
 
     // Initialize the result array with empty arrays for each year
-    const classesByYear = [[], [], [], [], []];
+    const classesByYear = [[], [], [], [], [], []];
 
     // Flatten the results and group by year
     classes.forEach((level) => {
       level.classes.forEach((cls) => {
-        if (cls.year - 1 >= 0 && cls.year - 1 < classesByYear.length) {
-          classesByYear[cls.year - 1].push({
-            name: cls.name,
-            id: cls.id,
-            grade: cls.grade,
-            number: cls.number,
-            year: cls.year,
-          });
+        if (grade.toLowerCase() === "primaire") {
+          if (cls.year >= 0 && cls.year < classesByYear.length) {
+            classesByYear[cls.year].push({
+              name: cls.name,
+              id: cls.id,
+              grade: cls.grade,
+              number: cls.number,
+              year: cls.year,
+            });
+          }
+        } else {
+          if (cls.year - 1 >= 0 && cls.year - 1 < classesByYear.length) {
+            classesByYear[cls.year - 1].push({
+              name: cls.name,
+              id: cls.id,
+              grade: cls.grade,
+              number: cls.number,
+              year: cls.year,
+            });
+          }
         }
       });
     });

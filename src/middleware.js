@@ -7,4 +7,4 @@ export default withAuth({
   },
 });
 
-// export const config = { matcher: ["/chat", "/"] }; // Specify the protected routes
+// export const config = { matcher: ["/chat", "/"] }; // Specify the protected routes .

@@ -65,7 +65,7 @@ async function handleImageUpload(blob) {
 
   const formData = new FormData();
   formData.append("file", file);
-  formData.append("upload_preset", "vtxres570000");
+  formData.append("upload_preset", "axknggyv");
 
   try {
     const response = await fetch(process.env.CLOUDINARY_IMG_API, {
@@ -75,12 +75,12 @@ async function handleImageUpload(blob) {
 
     if (!response.ok) {
       const errorData = await response.json();
-      // console.error("Upload Error:", errorData);
+      console.error("Upload Error:", errorData);
       return;
     }
 
     const data = await response.json();
-    // console.log("Upload successful:", data);
+    console.log("Upload successful:", data);
     return data.secure_url;
   } catch (error) {
     console.error("Upload Error:", error);

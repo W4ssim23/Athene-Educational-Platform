@@ -28,7 +28,7 @@ const SearchBar = () => {
           setStudents(data.students);
         }
         //else a toast message will be shown
-      } else if (pathname === "teachers") {
+      } else if (pathname === "/teachers") {
         const response = await fetch(`/api/teachers?search=${e.target.value}`, {
           method: "GET",
           headers: {

@@ -18,51 +18,43 @@ export async function GET(req) {
 
     const searchParams = new URL(req.url).searchParams;
     const search = searchParams.get("search");
+    const page = parseInt(searchParams.get("page")) || 1;
+    const limit = parseInt(searchParams.get("limit")) || 20;
 
     await connectMongoDB();
 
     let students;
+    const query = { role: "student" };
 
     if (search && search !== "") {
-      const searchRegex = new RegExp(search, "i"); // 'i' for case-insensitive
-      students = await User.find({
-        role: "student",
-        $or: [
-          { firstName: searchRegex },
-          { lastName: searchRegex },
-          {
-            $expr: {
-              $regexMatch: {
-                input: { $concat: ["$firstName", " ", "$lastName"] },
-                regex: searchRegex,
-              },
+      const searchRegex = new RegExp(search, "i");
+      query.$or = [
+        { firstName: searchRegex },
+        { lastName: searchRegex },
+        {
+          $expr: {
+            $regexMatch: {
+              input: { $concat: ["$firstName", " ", "$lastName"] },
+              regex: searchRegex,
             },
           },
-        ],
-      })
-        .select(
-          "-password -bahbah -notifications -modules -classes -updatedAt -createdAt -username -role -isAdmin -about -__v"
-        )
-        .lean()
-        .exec();
-    } else {
-      students = await User.find({ role: "student" })
-        .select(
-          "-password -bahbah -notifications -modules -classes -updatedAt -createdAt -username -role -isAdmin -about -__v"
-        )
-        .lean()
-        .exec();
+        },
+      ];
     }
 
-    // Transform each student to include id instead of _id
-    const transformedStudents = students.map((student) => ({
-      ...student,
-      id: student._id,
-      _id: undefined, // Remove _id field
-    }));
+    students = await User.find(query)
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .select(
+        "-password -bahbah -notifications -modules -classes -updatedAt -createdAt -username -role -isAdmin -about -__v"
+      )
+      .lean()
+      .exec();
+
+    const totalStudents = await User.countDocuments(query);
 
     return NextResponse.json(
-      { students: transformedStudents },
+      { students, total: totalStudents, page, limit },
       { status: 200 }
     );
   } catch (error) {

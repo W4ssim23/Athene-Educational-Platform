@@ -30,6 +30,9 @@ export default function AddForm() {
   const [selectedClass, setSelectedClass] = useState(null);
   const [classError, setClassError] = useState(null);
 
+  //because we are not obliged to fill the email now :
+  const [emailError, setEmailError] = useState(null);
+
   const { students, setStudents } = useContext(FetchingContext);
 
   const {
@@ -83,6 +86,14 @@ export default function AddForm() {
       return;
     }
 
+    if (
+      data.email &&
+      (!data.email.includes("@") || !data.email.includes("."))
+    ) {
+      setEmailError("Wrong email format");
+      return;
+    }
+
     const selectedClassObj = classes.find(
       (classs) => classs.name === selectedClass
     );
@@ -100,6 +111,9 @@ export default function AddForm() {
         },
         body: JSON.stringify({
           ...data,
+          parentName: data.parentName || "Unknown",
+          address: data.address || "Unknown",
+          email: data.email || "mail@ath.dz",
           grade: selectedGrade,
           classs: selectedClass,
           classId: selectedClassObj.id,
@@ -162,24 +176,30 @@ export default function AddForm() {
                   <Input
                     label="Parent Name"
                     variant="bordered"
-                    {...register("parentName", {
-                      validate: (value) =>
-                        value.length >= 2 ||
-                        "Must be at least 2 characters long",
-                    })}
-                    isInvalid={!!errors.parentName}
+                    {...register(
+                      "parentName"
+                      // , {
+                      //   validate: (value) =>
+                      //     value.length >= 2 ||
+                      //     "Must be at least 2 characters long",
+                      // }
+                    )}
+                    // isInvalid={!!errors.parentName}
                     errorMessage={errors?.parentName?.message ?? ""}
                   />
                   <Input
                     className="mt-3 sm:mt-0"
                     label="Address"
                     variant="bordered"
-                    {...register("address", {
-                      validate: (value) =>
-                        value.length >= 2 ||
-                        "Must be at least 2 characters long",
-                    })}
-                    isInvalid={!!errors.address}
+                    {...register(
+                      "address"
+                      // , {
+                      //   validate: (value) =>
+                      //     value.length >= 2 ||
+                      //     "Must be at least 2 characters long",
+                      // }
+                    )}
+                    // isInvalid={!!errors.address}
                     errorMessage={errors?.address?.message ?? ""}
                   />
                 </div>
@@ -202,16 +222,19 @@ export default function AddForm() {
                     className="mt-3 sm:mt-0"
                     label="Email"
                     variant="bordered"
-                    {...register("email", {
-                      validate: (value) => {
-                        if (value.includes("@") && value.includes("."))
-                          return true;
-                        if (value.length === 0) return "Email required";
-                        return "Email not valid";
-                      },
-                    })}
-                    isInvalid={!!errors.email}
-                    errorMessage={errors?.email?.message ?? ""}
+                    {...register(
+                      "email"
+                      // , {
+                      //   validate: (value) => {
+                      //     if (value.includes("@") && value.includes("."))
+                      //       return true;
+                      //     if (value.length === 0) return "Email required";
+                      //     return "Email not valid";
+                      //   },
+                      // }
+                    )}
+                    isInvalid={emailError}
+                    errorMessage={emailError}
                   />
                 </div>
                 <Select

@@ -66,19 +66,20 @@ export async function POST(req, { params }) {
     }
 
     // Filter classes by the specified year
+    const classYear = year === "prepa" ? 0 : parseInt(year);
     let existingClasses = level.classes.filter((cls) => {
       //   console.log(cls.year == year);
-      return cls.year == year;
+      return cls.year == classYear;
     });
     // console.log(existingClasses);
     // console.log(existingClasses.length);
     const number = existingClasses.length + 1;
-    const name = `${year}${letter}${number}`;
+    const name = `${classYear}${letter}${number}`;
 
     const newClass = {
       name,
       grade,
-      year,
+      year: classYear,
       number,
       modules: [],
       students: [],

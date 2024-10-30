@@ -84,8 +84,10 @@ export async function POST(req, { params }) {
 
     // Add the class name to the teacher's list of classes
     teacher.classes = teacher.classes || [];
-    teacher.classes.push(cls.name);
-    await teacher.save();
+    if (!teacher.classes.includes(cls.name)) {
+      teacher.classes.push(cls.name);
+      await teacher.save();
+    }
 
     // Create a new collection on Firebase
     const firestore = admin.firestore();
